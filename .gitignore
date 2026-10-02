@@ -1,0 +1,9 @@
+# Installed dependencies and generated output
+node_modules/
+.next/
+out/
+dist/
+
+# Local system files and logs
+.DS_Store
+*.log
