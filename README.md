@@ -1,4 +1,4 @@
-# Zero to Tech · 模块 4.6 静态导出
+# Zero to Tech · 全栈文字实验室
 
 个人主页与文字实验室使用 Next.js App Router。按照模块 4.6 的方式 B，构建时生成完整的静态网站 `out/`，部署时由 Nginx 提供文件。
 
@@ -7,6 +7,7 @@
 ```bash
 cd ~/zero-to-tech
 npm ci
+cp .env.example .env.local  # 首次配置；将值改为 http://localhost:8000
 npm run dev
 ```
 
@@ -20,6 +21,12 @@ npm run dev
 npm run build
 npm run preview
 ```
+
+本地 `npm run preview` 只提供静态文件，没有 `/api/` 反向代理。
+如果需要在本地静态预览中调用后端，构建时使用
+`NEXT_PUBLIC_API_BASE_URL=http://localhost:8000 npm run build`，并通过
+`http://localhost:3000` 访问，使其与后端允许的开发源一致。
+部署到服务器前重新按下面的同源方式构建。
 
 预览地址是 http://127.0.0.1:3000 。先停止正在使用 3000 端口的开发服务。
 
@@ -39,63 +46,130 @@ out/
 
 `.gitignore` 已忽略 `out/`、`.next/` 和 `node_modules/`。提交的是源码与配置；静态资源通过构建生成。
 
-## 提交源码
+## 配置说明
+
+| 文件 | 键 | 值 |
+| --- | --- | --- |
+| `.env.local` | `NEXT_PUBLIC_API_BASE_URL` | 本地开发填 `http://localhost:8000` |
+| `.env.production` | `NEXT_PUBLIC_API_BASE_URL` | 线上留空，使用同源 `/api/` 路径 |
+| `backend/.env` | `ALLOWED_ORIGINS` | `http://localhost:3000`；多个开发源用逗号分隔 |
+
+首次本地运行后端：
 
 ```bash
-git add -A
-git commit -m "Enable module 4.6 static export"
-git push origin main
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+fastapi dev
 ```
 
-## 云服务器步骤（本次仅准备，未执行）
+实际配置文件不进入 Git，示例配置可以提交。保留 CORS 和前端的
+`credentials: "include"`，本地 3000 → 8000 仍然需要跨源请求。
+历史记录保存在 `backend/history.db`，升级会保留旧数据；没有会话编号的旧记录不会分配给新访客。
 
-下面按课程的 Ubuntu 用户 `ubuntu`、项目路径 `/home/ubuntu/zero-to-tech` 举例。部署时替换服务器 IP，并确认实际项目路径和现有 Nginx 配置。
+## 部署到 Ubuntu 服务器
+
+准备 Python 3.10+、Node.js 20 LTS 或更高版本及 Nginx。
+下面以用户 `ubuntu`、项目路径 `/home/ubuntu/zero-to-tech` 为例，应用前按实际情况修改。
+
+### 1. 更新代码与构建前端
 
 ```bash
-ssh ubuntu@你的服务器IP
-node -v
 cd ~/zero-to-tech
-git status --short --branch
-git pull --ff-only origin main
+git status --short
+git pull --ff-only
 npm ci
-npm run build
 ```
 
-如果拉取被拒绝或服务器有未提交改动，先处理服务器仓库的状态，再继续构建。
-
-把 `deploy/nginx.conf` 中的 `server` 配置合并到服务器实际使用的站点配置中：
+首次部署时将 `.env.example` 复制为 `.env.production`；已有配置则编辑其中的
+`NEXT_PUBLIC_API_BASE_URL`，确保值为空。
 
 ```bash
-sudo vim /etc/nginx/sites-enabled/default
+cp .env.example .env.production  # 仅首次部署
+NEXT_PUBLIC_API_BASE_URL= npm run build
 ```
 
-核心配置为：
+这里显式设置空值，防止服务器残留的 `.env.local` 覆盖生产配置。
+构建产物在 `out/`，由 Nginx 提供，线上无需运行 Next.js 开发服务器。
 
-```nginx
-root /home/ubuntu/zero-to-tech/out;
-index index.html;
-
-location / {
-    try_files $uri $uri.html $uri/ =404;
-}
-```
-
-`/text-lab` 会匹配到 `out/text-lab.html`；未知地址返回 404。
-
-保存后在服务器上执行：
+### 2. 安装后端依赖
 
 ```bash
-sudo nginx -t
-sudo systemctl reload nginx
+cd ~/zero-to-tech/backend
+python3 -m venv --prompt=zero-to-tech .venv  # 首次部署
+.venv/bin/pip install -r requirements.txt
 ```
 
-只在 `nginx -t` 通过后重载。最后访问 `http://你的服务器IP/` 和 `http://你的服务器IP/text-lab`，检查刷新与交互，并查看页面源代码确认有标题和内容。
+首次部署复制 `backend/.env.example` 为 `backend/.env`。
+已有 `.env` 时保留其他配置，只确保 `ALLOWED_ORIGINS` 已设置。
 
-服务器仅需在更新时安装依赖并构建；正式提供页面的是 Nginx。`serve` 是本地预览工具，无需在云服务器常驻运行。
+```bash
+cp .env.example .env  # 在 backend 目录执行，仅首次部署
+```
+
+### 3. 交给 systemd
+
+先修改 `deploy/zero-backend.service` 的 `User`、`WorkingDirectory` 和 `ExecStart` 路径。
+如果旧的 nohup 服务占用 8000，确认它的进程号后停止旧进程，再启动新服务。
+
+```bash
+cd ~/zero-to-tech
+sudo install -m 644 deploy/zero-backend.service /etc/systemd/system/zero-backend.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now zero-backend
+sudo systemctl status zero-backend --no-pager
+```
+
+后端只监听 `127.0.0.1:8000`，进程退出后自动重启，开机自动启动。
+
+### 4. 配置 Nginx
+
+将 `deploy/nginx.conf` 中的配置合并到服务器已有站点中，保留既有域名、HTTPS 和其他站点配置。
+静态目录指向实际的 `out/`；`/api/` 转发到 `127.0.0.1:8000`。
+`proxy_pass` 末尾没有斜杠，以保留完整的 `/api/` 路径。
+
+```bash
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+只有 `/api/` 会进入后端，`/docs` 和 `/openapi.json` 不通过此站点公开。
+在云安全组及防火墙删除 8000 的公网放行规则，保留所需的 SSH、HTTP 和既有 HTTPS 规则。
+
+### 5. 验证
+
+在服务器执行：
+
+```bash
+curl -f http://127.0.0.1:8000/api/profile
+curl -f http://localhost/api/profile
+curl -i http://localhost/api/history
+sudo systemctl is-enabled zero-backend
+sudo systemctl is-active zero-backend
+```
+
+浏览器打开服务器网站，验证文字分析与历史记录。无痕窗口应有独立的历史。
+Network 中 API 请求应使用与页面相同的源；公网直接访问 8000 应连接失败。
+`/docs` 和 `/openapi.json` 应返回 404。
+
+## 日常发布与日志
+
+```bash
+cd ~/zero-to-tech
+git pull --ff-only
+NEXT_PUBLIC_API_BASE_URL= npm run build  # 前端变化时
+sudo systemctl restart zero-backend     # 后端变化时
+sudo systemctl status zero-backend --no-pager
+journalctl -u zero-backend -n 50 --no-pager
+journalctl -u zero-backend -f            # Ctrl+C 退出
+```
+
+改 service 文件后先执行 `sudo systemctl daemon-reload`，再重启后端。
+改 Nginx 配置后先 `sudo nginx -t`，成功后再 reload。
 
 ## 参考
 
-- [模块 4.6 课程](https://xn--ygr25xpohxwz.com/zero-to-fullstack/lessons/module-4-6/)
-- [Next.js 15 静态导出](https://nextjs.org/docs/15/app/guides/static-exports)
-- [Nginx try_files](https://nginx.org/en/docs/http/ngx_http_core_module.html#try_files)
-- [Vercel serve 静态预览工具](https://github.com/vercel/serve)
+- [模块 7.2 课程](https://xn--ygr25xpohxwz.com/zero-to-fullstack/lessons/module-7-2/)
+- [Nginx proxy_pass](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass)
+- [systemd service](https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html)

@@ -1,0 +1,14 @@
+# Adjust User and both project paths for the actual cloud server.
+[Unit]
+Description=zero-to-tech backend
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/zero-to-tech/backend
+ExecStart=/home/ubuntu/zero-to-tech/backend/.venv/bin/fastapi run --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
