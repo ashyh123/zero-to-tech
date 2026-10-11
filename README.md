@@ -131,7 +131,9 @@ Nginx 的 `root` 指向 `$DEPLOY_ROOT/current`，将 `deploy/nginx.conf` 的示�
 
 部署脚本先上传到 `releases/运行编号-重试编号`，全部成功后通过原子替换 `current` 符号链接切换版本。测试、构建或上传失败时保留上一版。新版本继承旧版带哈希的静态资源，避免已打开页面在切换后丢失脚本。旧版本不会自动删除；需要时由维护者清理。回滚可以将 `current` 原子切回已确认的旧 release。
 
-这是已准备的发布流程；只有实际设置仓库变量、密钥和服务器目录后，自动部署才会启用。无需等待 HTTPS：可以先用 HTTP 发布，HTTPS 开通后修改公开地址并重建。
+当前仓库已配置自动发布：公开地址为 `http://ashyh666.me`，部署用户为 `blogdeploy`，发布根目录为 `/var/www/agent-journey`。推送 `main` 后自动测试、构建并部署；专用密钥仅保存在本机 SSH 目录和 GitHub Actions Secrets 中，不提交到仓库。HTTPS 开通后修改仓库变量 `SITE_URL` 并重新发布。
+
+发布记录与维护方式见 `docs/production.md`。
 
 ## 旧版实验室
 
