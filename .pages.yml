@@ -74,7 +74,7 @@ content:
         type: string
         description: 仅填写 content/series.json 中已定义的系列标识。普通文章留空。
         pattern:
-          regex: "^(?!preparing$)[a-z0-9]+(?:-[a-z0-9]+)*$"
+          regex: "^(?:|(?!preparing$)[a-z0-9]+(?:-[a-z0-9]+)*)$"
           message: 使用已有系列的小写英文标识。
       - name: order
         label: 系列中的顺序（可选）
