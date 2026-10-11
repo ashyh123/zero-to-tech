@@ -1,175 +1,138 @@
-# Zero to Tech · 全栈文字实验室
+# 一个零基础agent学生的旅程
 
-个人主页与文字实验室使用 Next.js App Router。按照模块 4.6 的方式 B，构建时生成完整的静态网站 `out/`，部署时由 Nginx 提供文件。
+面向同路学习者的个人博客：Agent 为主线，前后端与部署作为配套实践。Astro 构建为静态网站，不需要在线后端。旧版源码保留在 `backend/`。
 
-## 本地开发
+## 开发与预览
+
+使用 Node.js 22：
 
 ```bash
-cd ~/zero-to-tech
 npm ci
-cp .env.example .env.local  # 首次配置；将值改为 http://localhost:8000
 npm run dev
 ```
 
-打开 http://localhost:3000 。页面内容集中在 `data/site.js`。
-
-## 构建和预览静态网站
-
-`next.config.mjs` 已启用 `output: "export"`，同时保留本项目的 `outputFileTracingRoot` 配置。
+访问 http://localhost:3000 。生产预览：
 
 ```bash
+npm test
 npm run build
 npm run preview
 ```
 
-本地 `npm run preview` 只提供静态文件，没有 `/api/` 反向代理。
-如果需要在本地静态预览中调用后端，构建时使用
-`NEXT_PUBLIC_API_BASE_URL=http://localhost:8000 npm run build`，并通过
-`http://localhost:3000` 访问，使其与后端允许的开发源一致。
-部署到服务器前重新按下面的同源方式构建。
+构建生成 `out/`。预览服务器只监听本机 3000；端口被占用时可用 `PORT=3002 npm run preview`。未知路径返回 404，文章可以直接访问和刷新。
 
-预览地址是 http://127.0.0.1:3000 。先停止正在使用 3000 端口的开发服务。
+## 网站地址
 
-`npm run preview` 与 `npm start` 都使用本地静态文件服务器读取 `out/`。静态导出模式不再使用 `next start`。
+在 `.env.local` 设置完整公开地址；HTTPS 未就绪时可以先使用 HTTP：
 
-构建后应包含：
-
-```text
-out/
-  index.html
-  text-lab.html
-  404.html
-  _next/static/
+```dotenv
+SITE_URL=http://你的域名
 ```
 
-验证首页与 `/text-lab` 直接访问、刷新、导航、前进后退和输入字数统计。不存在的路径应返回 404。
+不要填写路径或末尾斜杠。HTTPS 开通后改为 `https://你的域名` 并重新构建。这个值用于 canonical、RSS、sitemap 和分享链接；未设置时使用本地地址，不适合直接发布。
 
-`.gitignore` 已忽略 `out/`、`.next/` 和 `node_modules/`。提交的是源码与配置；静态资源通过构建生成。
+CI 使用仓库变量 `SITE_URL`，不读取本机 `.env.local`。源码提交后推送到仓库不会自动复制本机环境变量。
 
-## 配置说明
+## RSS 发布开关
 
-| 文件 | 键 | 值 |
-| --- | --- | --- |
-| `.env.local` | `NEXT_PUBLIC_API_BASE_URL` | 本地开发填 `http://localhost:8000` |
-| `.env.production` | `NEXT_PUBLIC_API_BASE_URL` | 线上留空，使用同源 `/api/` 路径 |
-| `backend/.env` | `ALLOWED_ORIGINS` | `http://localhost:3000`；多个开发源用逗号分隔 |
+RSS 默认关闭：页面不显示订阅入口，构建产物不包含 `rss.xml`，直接访问 `/rss.xml` 返回 404。提交代码本身不会开放 RSS。
 
-首次本地运行后端：
+GitHub 自动发布在 `DEPLOY_ENABLED=true` 时为构建开启 RSS。手动发布可使用 `RSS_ENABLED=true npm run build`，或在 `.env.local` 设置 `RSS_ENABLED=true`；本地预览继续保持 `false`。开关修改后需要重新构建（开发服务器需重启）。已经发布的旧版本需要重新部署关闭 RSS 的构建，才会移除旧链接。
 
-```bash
-cd backend
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env
-fastapi dev
+## 写文章
+
+复制 `templates/post.md` 到 `content/posts/你的文件名.md`，修改 front matter 与正文：
+
+```yaml
+---
+slug: my-first-agent
+title: "我的第一个 Agent"
+summary: "描述这次实践的具体问题与结果。"
+date: "2026-10-11"
+tags: [Agent, 实践]
+draft: true
+---
 ```
 
-实际配置文件不进入 Git，示例配置可以提交。保留 CORS 和前端的
-`credentials: "include"`，本地 3000 → 8000 仍然需要跨源请求。
-历史记录保存在 `backend/history.db`，升级会保留旧数据；没有会话编号的旧记录不会分配给新访客。
+- `slug` 是稳定的链接标识，仅允许小写字母、数字和单连字符。发布后尽量不改。`preparing` 是空状态保留值。
+- 日期使用带引号的 `YYYY-MM-DD`；可选 `updated` 不能早于发布日期。
+- `draft` 必须明确为布尔值；`true` 不生成文章页面，也不会进入首页、标签、系列、RSS 或 sitemap。日期不会自动定时发布。
+- 本地写作时将文章临时设为 `draft: false` 并运行开发服务器，即可预览 `/blog/slug`；提交前改回 `true`。准备发布时改为 `false`。
+- 新增文章路径后，如果开发服务器未识别，重启 `npm run dev`；生产构建会生成全部公开路径。
+- 支持标准 Markdown、GFM 表格、引用、列表、图片和代码高亮；不支持 MDX 或正文 HTML。
+- 图片放在 `public/images/`，正文使用 `![说明](/images/文件名.png)`。
 
-## 部署到 Ubuntu 服务器
+没有公开文章时，文章与系列显示“准备中”，不会生成虚构内容或占位详情页。Astro 只为公开内容生成动态路径。
 
-准备 Python 3.10+、Node.js 20 LTS 或更高版本及 Nginx。
-下面以用户 `ubuntu`、项目路径 `/home/ubuntu/zero-to-tech` 为例，应用前按实际情况修改。
+## 系列
 
-### 1. 更新代码与构建前端
+在 `content/series.json` 添加定义：
 
-```bash
-cd ~/zero-to-tech
-git status --short
-git pull --ff-only
-npm ci
+```json
+[
+  {
+    "slug": "agent-from-scratch",
+    "title": "从零构建 Agent",
+    "description": "用连续的实践记录搭建过程。"
+  }
+]
 ```
 
-首次部署时将 `.env.example` 复制为 `.env.production`；已有配置则编辑其中的
-`NEXT_PUBLIC_API_BASE_URL`，确保值为空。
+对应文章增加：
 
-```bash
-cp .env.example .env.production  # 仅首次部署
-NEXT_PUBLIC_API_BASE_URL= npm run build
+```yaml
+series: agent-from-scratch
+order: 1
 ```
 
-这里显式设置空值，防止服务器残留的 `.env.local` 覆盖生产配置。
-构建产物在 `out/`，由 Nginx 提供，线上无需运行 Next.js 开发服务器。
+公开文章按照 `order` 排序，详情页提供上一篇和下一篇。空系列不展示。重复 slug、重复系列顺序、未定义的系列和无效字段都会令构建失败，避免发布错误内容。
 
-### 2. 安装后端依赖
+## 内容边界
 
-```bash
-cd ~/zero-to-tech/backend
-python3 -m venv --prompt=zero-to-tech .venv  # 首次部署
-.venv/bin/pip install -r requirements.txt
-```
+`lib/content.mjs` 是统一内容适配层，页面只依赖其返回的数据。以后接入 CMS 时，替换文章读取与发布流程，继续复用文章、系列、标签页面。草稿过滤保留在内容适配层，正文生成 HTML 前进行清理。
 
-首次部署复制 `backend/.env.example` 为 `backend/.env`。
-已有 `.env` 时保留其他配置，只确保 `ALLOWED_ORIGINS` 已设置。
+`data/site.js` 管理站名、简介、GitHub、邮箱与网站地址。站点采用统一单栏布局：顶部显示 Evan Huang 和横向导航、居中的内容主栏，手机端顶部展开菜单；下滑时收起导航，上滑时重新出现；首页只展示简介、文章与系列入口。`src/pages/` 管理 Astro 页面与 RSS、sitemap、robots 静态端点，`src/layouts/` 管理公共页面结构，`src/components/` 管理站点外壳、列表、空状态和交互组件，`src/scripts/` 管理主题与加载动效。`css/blog.css` 保留全局基础样式和尚未迁移的内页样式。
 
-```bash
-cp .env.example .env  # 在 backend 目录执行，仅首次部署
-```
+### 组件与交互
 
-### 3. 交给 systemd
+Starwind UI 的 Astro 原生按钮由 `src/components/starwind/Button.astro` 统一封装，用于主题切换、手机导航和标签筛选。保留本网站的 Tailwind 样式，不套用组件库默认视觉主题。内容页面不加载 React 运行时，Motion 只负责加载层动效。站内跳转使用 Astro ClientRouter，只更新页面内容；流星背景通过 `transition:persist` 保留节点和动画进度。主题、导航和标签筛选按页面切换重新绑定，旧监听通过 AbortController 释放。入场动画仅在直接访问或刷新时播放。
 
-先修改 `deploy/zero-backend.service` 的 `User`、`WorkingDirectory` 和 `ExecStart` 路径。
-如果旧的 nohup 服务占用 8000，确认它的进程号后停止旧进程，再启动新服务。
+### 样式逐步迁移
 
-```bash
-cd ~/zero-to-tech
-sudo install -m 644 deploy/zero-backend.service /etc/systemd/system/zero-backend.service
-sudo systemctl daemon-reload
-sudo systemctl enable --now zero-backend
-sudo systemctl status zero-backend --no-pager
-```
+Tailwind 4 通过 `astro.config.mjs` 中的 Vite 插件接入，入口为 `css/tailwind.css`。工具类使用 `tw:` 前缀，扫描范围限定为 `src/`；暂不启用 Preflight，现有重置归入 `base` 层，使组件工具类可以覆盖基础规则。`compact`、`single`、`mobile` 自定义变体分别保持原有的 ≤1150px、≤900px、≤700px 断点。
 
-后端只监听 `127.0.0.1:8000`，进程退出后自动重启，开机自动启动。
+- 加载界面和文字卷轴的布局、间距与字体使用 Tailwind；加载颜色与字体集中定义在入口文件的 `@theme` 中。
+- 渐隐遮罩、进度条渐变、动画及减少动态效果的适配分别归入 `src/components/TextStream.module.css` 和 `src/components/LoadingIndicator.module.css`，由对应组件直接导入。
+- 文字卷轴使用 Motion 的帧循环保持原有速度和滚动惯性，加载层使用 Motion 淡出；支持减少动态效果，并在加载结束时释放动画和事件监听。
+- 站点外壳、顶部导航、页脚、首页区块、文章列表和空状态已使用 Tailwind；对应的旧规则已从 `blog.css` 删除。首页的系列卡片也使用工具类，系列内页暂保留原有样式。颜色通过主题变量复用既有色值。
+- `css/themes.css` 统一管理深浅色调色板。顶部圆形按钮点击一次直接切换深色／浅色，选择保存在 `site-theme`；未手动选择时跟随系统。初始化脚本在首屏绘制前应用偏好。
+- 后续按组件迁移：移走旧样式后再使用工具类，避免同一属性同时受全局 CSS 与 Tailwind 控制。含有特殊效果的组件继续保留 CSS Modules。
 
-### 4. 配置 Nginx
+## 自动构建与发布
 
-将 `deploy/nginx.conf` 中的配置合并到服务器已有站点中，保留既有域名、HTTPS 和其他站点配置。
-静态目录指向实际的 `out/`；`/api/` 转发到 `127.0.0.1:8000`。
-`proxy_pass` 末尾没有斜杠，以保留完整的 `/api/` 路径。
+`.github/workflows/publish.yml` 在推送 main / master 时执行测试、构建并保存 `static-blog` 产物。未启用部署时只构建，不连接服务器。
 
-```bash
-sudo nginx -t && sudo systemctl reload nginx
-```
+完成以下配置后，将仓库变量 `DEPLOY_ENABLED` 设为 `true`：
 
-只有 `/api/` 会进入后端，`/docs` 和 `/openapi.json` 不通过此站点公开。
-在云安全组及防火墙删除 8000 的公网放行规则，保留所需的 SSH、HTTP 和既有 HTTPS 规则。
+| 类型      | 名称              | 用途                                            |
+| --------- | ----------------- | ----------------------------------------------- |
+| Variables | `SITE_URL`        | 网站公开地址，例如 `http://你的域名`            |
+| Variables | `DEPLOY_ROOT`     | 服务器发布根目录，例如 `/var/www/agent-journey` |
+| Variables | `DEPLOY_ENABLED`  | `true` 时启用部署                               |
+| Secrets   | `SSH_HOST`        | 服务器 IP 或主机名                              |
+| Secrets   | `SSH_USER`        | 部署用户                                        |
+| Secrets   | `SSH_PORT`        | 可选，默认 22                                   |
+| Secrets   | `SSH_PRIVATE_KEY` | 部署专用 SSH 私钥                               |
+| Secrets   | `SSH_KNOWN_HOSTS` | 已通过可信渠道核对的服务器主机密钥              |
 
-### 5. 验证
+服务器需要 Linux、Nginx、rsync，部署用户需要拥有 `DEPLOY_ROOT` 的写入权限。为 GitHub 的 `production` environment 配置所需的变量/密钥或使用仓库级配置。
 
-在服务器执行：
+Nginx 的 `root` 指向 `$DEPLOY_ROOT/current`，将 `deploy/nginx.conf` 的示例路径与域名替换为实际值。不要覆盖已经配置的 HTTPS。
 
-```bash
-curl -f http://127.0.0.1:8000/api/profile
-curl -f http://localhost/api/profile
-curl -i http://localhost/api/history
-sudo systemctl is-enabled zero-backend
-sudo systemctl is-active zero-backend
-```
+部署脚本先上传到 `releases/运行编号-重试编号`，全部成功后通过原子替换 `current` 符号链接切换版本。测试、构建或上传失败时保留上一版。新版本继承旧版带哈希的静态资源，避免已打开页面在切换后丢失脚本。旧版本不会自动删除；需要时由维护者清理。回滚可以将 `current` 原子切回已确认的旧 release。
 
-浏览器打开服务器网站，验证文字分析与历史记录。无痕窗口应有独立的历史。
-Network 中 API 请求应使用与页面相同的源；公网直接访问 8000 应连接失败。
-`/docs` 和 `/openapi.json` 应返回 404。
+这是已准备的发布流程；只有实际设置仓库变量、密钥和服务器目录后，自动部署才会启用。无需等待 HTTPS：可以先用 HTTP 发布，HTTPS 开通后修改公开地址并重建。
 
-## 日常发布与日志
+## 旧版实验室
 
-```bash
-cd ~/zero-to-tech
-git pull --ff-only
-NEXT_PUBLIC_API_BASE_URL= npm run build  # 前端变化时
-sudo systemctl restart zero-backend     # 后端变化时
-sudo systemctl status zero-backend --no-pager
-journalctl -u zero-backend -n 50 --no-pager
-journalctl -u zero-backend -f            # Ctrl+C 退出
-```
-
-改 service 文件后先执行 `sudo systemctl daemon-reload`，再重启后端。
-改 Nginx 配置后先 `sudo nginx -t`，成功后再 reload。
-
-## 参考
-
-- [模块 7.2 课程](https://xn--ygr25xpohxwz.com/zero-to-fullstack/lessons/module-7-2/)
-- [Nginx proxy_pass](https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass)
-- [systemd service](https://www.freedesktop.org/software/systemd/man/latest/systemd.service.html)
+`backend/` 保留学习用实现。新版前端不请求 `/api/`，不需要启动 FastAPI 或 SQLite 服务。旧版部署说明在 `docs/legacy-deployment.md`，不用于当前博客发布。历史数据库没有删除；要停止线上旧服务时请单独处理。

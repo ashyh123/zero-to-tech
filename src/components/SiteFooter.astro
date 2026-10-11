@@ -1,0 +1,26 @@
+---
+import { rssEnabled, site } from "../../data/site.js";
+---
+
+<footer class="site-footer tw:flex tw:flex-col tw:gap-[18px] tw:py-[25px] tw:mt-[45px] tw:border-0 tw:border-t tw:border-solid tw:border-line tw:text-[11px] tw:text-[var(--tone-8392a6)] tw:mobile:py-[22px] tw:mobile:mt-[30px] tw:mobile:text-[10px]">
+  <nav
+    aria-label="联系我"
+    class="tw:flex tw:flex-wrap tw:gap-x-[24px] tw:gap-y-[10px] tw:text-[13px] tw:text-nav"
+  >
+    <a href={site.github}>
+      GitHub <span aria-hidden="true">↗</span>
+    </a>
+    <a href={`mailto:${site.email}`}>
+      邮箱联系 <span aria-hidden="true">↗</span>
+    </a>
+    {rssEnabled && (
+      <a href="/rss.xml">
+        RSS 订阅 <span aria-hidden="true">↗</span>
+      </a>
+    )}
+  </nav>
+  <div class="tw:flex tw:justify-between tw:gap-[20px] tw:mobile:flex-col tw:mobile:gap-[7px]">
+    <span>{site.name}</span>
+    <span>保持好奇，慢慢积累。</span>
+  </div>
+</footer>

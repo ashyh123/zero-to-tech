@@ -1,0 +1,73 @@
+---
+// Staggered trajectories keep only a few meteors visible at any one time.
+const meteors = Array.from({ length: 12 }, (_, index) => ({
+  x: 8 + ((index * 37) % 125),
+  duration: 7 + ((index * 17) % 45) / 10,
+  delay: -((index * 23 + 7) % 110) / 10,
+  length: 100 + ((index * 29) % 85),
+}));
+---
+
+<div
+  class="meteor-field tw:fixed tw:inset-0 tw:z-0 tw:pointer-events-none tw:overflow-hidden tw:select-none"
+  aria-hidden="true"
+>
+  {meteors.map((meteor) => (
+    <span
+      class="meteor"
+      style={`--meteor-x:${meteor.x}%;--meteor-duration:${meteor.duration}s;--meteor-delay:${meteor.delay}s;--meteor-length:${meteor.length}px;`}
+    />
+  ))}
+</div>
+<style>
+  .meteor-field {
+    --meteor-strength: 0.65;
+  }
+  :global(:root[data-theme="light"]) .meteor-field {
+    --meteor-strength: 0.5;
+  }
+  .meteor {
+    position: absolute;
+    top: -200px;
+    left: var(--meteor-x);
+    width: 1.5px;
+    height: var(--meteor-length);
+    border-radius: 999px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      rgba(91, 160, 255, 0.65) 45%,
+      #a8d6ff 88%,
+      #f0f8ff
+    );
+    box-shadow: 0 0 6px rgba(100, 175, 255, 0.25);
+    opacity: 0;
+    animation: meteor-fall var(--meteor-duration) linear var(--meteor-delay)
+      infinite;
+  }
+  @keyframes meteor-fall {
+    0% {
+      opacity: 0;
+      transform: translate3d(0, 0, 0) rotate(35deg);
+    }
+    3% {
+      opacity: var(--meteor-strength);
+    }
+    20% {
+      opacity: var(--meteor-strength);
+    }
+    25%,
+    100% {
+      opacity: 0;
+      transform: translate3d(-70vh, calc(100vh + 400px), 0) rotate(35deg);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .meteor-field {
+      display: none;
+    }
+    .meteor {
+      animation: none;
+    }
+  }
+</style>

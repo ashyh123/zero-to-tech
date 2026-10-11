@@ -1,7 +1,9 @@
 # dependencies
 node_modules/
 
-# next.js
+# Astro
+.astro/
+# Previous framework build cache
 .next/
 out/
 

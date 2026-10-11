@@ -1,0 +1,76 @@
+---
+import Nav from "./Nav.astro";
+import ThemeSwitcher from "./ThemeSwitcher.astro";
+import Button from "./starwind/Button.astro";
+import { site } from "../../data/site.js";
+---
+
+<header
+  data-scroll-header
+  data-hidden="false"
+  data-floating="false"
+  class="site-header tw:sticky tw:top-0 tw:z-[100] tw:w-full tw:shrink-0 tw:bg-transparent tw:border-0 tw:transition-[translate] tw:duration-[420ms] tw:ease-[cubic-bezier(0.22,0.61,0.36,1)] tw:motion-reduce:transition-none"
+>
+  <div
+    class={`header-row tw:relative tw:w-full tw:max-w-[1100px] tw:mx-auto tw:px-[32px] tw:py-[20px] tw:flex tw:items-center tw:justify-between tw:gap-[24px] tw:mobile:px-[22px] tw:mobile:py-[17px] tw:mobile:flex-col tw:mobile:items-stretch tw:mobile:gap-0 `}
+  >
+    <div class="header-identity tw:relative tw:mobile:pr-[94px] tw:mobile:min-h-[38px] tw:mobile:flex tw:mobile:items-center">
+      <a
+        href="/"
+        class="wordmark nav-capsule tw:inline-flex tw:py-[8px] tw:px-[14px] tw:border tw:border-solid tw:border-transparent tw:rounded-full tw:mobile:py-[6px] tw:mobile:px-[12px] tw:text-[17px] tw:leading-[1.6] tw:font-semibold tw:tracking-[0.01em] tw:mobile:text-[15px] tw:mobile:leading-[1.5]"
+        aria-label={`${site.author}，首页`}
+      >
+        {site.author}
+      </a>
+      <Button
+        class="mobile-menu-toggle nav-capsule tw:hidden tw:mobile:absolute tw:mobile:right-0 tw:mobile:top-0 tw:mobile:grid tw:mobile:place-items-center tw:mobile:w-[38px] tw:mobile:h-[38px] tw:mobile:border tw:mobile:border-solid tw:mobile:border-line tw:mobile:rounded-full tw:mobile:bg-[var(--tone-19212b)] tw:mobile:text-[var(--tone-c8d4e5)] tw:mobile:cursor-pointer"
+        aria-label="打开导航菜单"
+        aria-expanded="false"
+        aria-controls="site-navigation-panel"
+      >
+        <svg
+          class="tw:w-[20px] tw:h-[20px]"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="1.5"
+          aria-hidden="true"
+        >
+          <path data-menu-icon d="M4 7h16M4 12h16M4 17h16" />
+        </svg>
+      </Button>
+    </div>
+    <div
+      id="site-navigation-panel"
+      class={`site-navigation-panel tw:flex tw:ml-auto tw:mobile:ml-0 tw:mobile:hidden tw:mobile:max-h-[calc(100dvh-105px)] tw:mobile:overflow-auto tw:mobile:pt-[23px]`}
+    >
+      <Nav />
+    </div>
+    <ThemeSwitcher />
+  </div>
+</header>
+
+<script>
+  import "../scripts/navigation";
+  import "../scripts/mobile-menu";
+</script>
+
+<style is:global>
+  .site-header[data-floating="true"] .nav-capsule {
+    border-radius: 999px;
+    border-color: var(--line);
+    background: var(--paper);
+    box-shadow: 0 4px 16px rgba(12, 30, 55, 0.08);
+  }
+  @supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0)) {
+    .site-header[data-floating="true"] .nav-capsule {
+      background: color-mix(in srgb, var(--paper) 72%, transparent);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
+      backdrop-filter: blur(18px) saturate(140%);
+    }
+    .site-header[data-floating="true"] .nav-capsule[aria-current="page"] {
+      background: color-mix(in srgb, var(--tone-202b3a) 78%, transparent);
+      border-color: var(--tone-2c3a4d);
+    }
+  }
+</style>

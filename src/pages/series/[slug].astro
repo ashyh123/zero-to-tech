@@ -1,0 +1,40 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getSeries } from "../../../lib/content.mjs";
+import PageHeading from "../../components/PageHeading.astro";
+import EmptyState from "../../components/EmptyState.astro";
+export function getStaticPaths() {
+  return getSeries().map((item) => ({
+    params: { slug: item.slug },
+    props: { item },
+  }));
+}
+const { item } = Astro.props;
+---
+
+<Layout
+  title={item.title}
+  description={item.description}
+  canonical={`/series/${Astro.params.slug}`}
+>
+  <>
+    <a class="back-link" href="/series">
+      返回系列专题
+    </a>
+    <PageHeading title={item.title} subtitle={item.description} />
+    <ol class="series-chapters">
+      {item.posts.map((post, index) => (
+        <li>
+          <span class="chapter-number">{index + 1}</span>
+          <div>
+            <h2>
+              <a href={`/blog/${post.slug}`}>{post.title}</a>
+            </h2>
+            <p>{post.summary}</p>
+            <span>{post.readingMinutes} 分钟阅读</span>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </>
+</Layout>

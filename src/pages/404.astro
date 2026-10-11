@@ -1,0 +1,20 @@
+---
+import Layout from "../layouts/Layout.astro";
+const metadata = {};
+---
+
+<Layout
+  noindex
+  title={metadata.title}
+  description={metadata.description}
+  canonical={metadata.alternates?.canonical}
+>
+  <div class="not-found">
+    <p class="error-number">404</p>
+    <h1>这页还没走到。</h1>
+    <p>页面可能已移动，或者地址输入有误。</p>
+    <a class="primary-link" href="/">
+      回到首页
+    </a>
+  </div>
+</Layout>

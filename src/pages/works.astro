@@ -1,0 +1,19 @@
+---
+import Layout from "../layouts/Layout.astro";
+import PageHeading from "../components/PageHeading.astro";
+const metadata = { title: "作品", alternates: { canonical: "/works" } };
+---
+
+<Layout
+  title={metadata.title}
+  description={metadata.description}
+  canonical={metadata.alternates?.canonical}
+>
+  <>
+    <PageHeading
+      title="把想法做出来"
+      subtitle="从小项目开始，理解代码怎样变成一个可以使用的东西。"
+    />
+    <p class="works-footnote">更多项目，随着学习慢慢积累。</p>
+  </>
+</Layout>

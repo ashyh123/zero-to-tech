@@ -1,0 +1,30 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import PageHeading from "../../components/PageHeading.astro";
+import BlogIndex from "../../components/BlogIndex.astro";
+import { getPosts } from "../../../lib/content.mjs";
+const metadata = {
+  title: "学习记录",
+  description: "从零学习 Agent 的记录、踩坑与项目实践。",
+  alternates: { canonical: "/blog" },
+};
+
+const posts = getPosts().map(({ body, ...post }) => post);
+---
+
+<Layout
+  title={metadata.title}
+  description={metadata.description}
+  canonical={metadata.alternates?.canonical}
+>
+  <>
+    <PageHeading
+      title="学习记录"
+      subtitle="把做过的事、遇到的问题和想明白的瞬间，留在这里。"
+    />
+    <BlogIndex
+      posts={posts}
+      tags={[...new Set(posts.flatMap((post) => post.tags))].sort()}
+    />
+  </>
+</Layout>

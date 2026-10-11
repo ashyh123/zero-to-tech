@@ -1,0 +1,85 @@
+---
+import { rssEnabled } from "../../data/site.js";
+import PostList from "./PostList.astro";
+import EmptyState from "./EmptyState.astro";
+import Button from "./starwind/Button.astro";
+const { posts, tags } = Astro.props;
+---
+
+<div class="reading-layout" data-blog-index>
+  <section aria-label="文章列表">
+    <p class="list-caption" data-list-caption aria-live="polite">
+      {posts.length
+        ? `${posts.length} 篇文章，按发布时间排列`
+        : "每一步，都值得记录"}
+    </p>
+    <PostList posts={posts} />
+    <div data-filter-empty hidden={posts.length > 0}>
+      <EmptyState />
+    </div>
+  </section>
+  <aside class="sidebar">
+    <h2>按标签浏览</h2>
+    {tags.length ? (
+      <div class="tag-list">
+        <Button class="tag selected" data-filter="" aria-pressed="true">
+          全部
+        </Button>
+        {tags.map((tag) => (
+          <Button class="tag" data-filter={tag} aria-pressed="false">
+            {tag}
+          </Button>
+        ))}
+      </div>
+    ) : (
+      <p>发布文章后，标签会出现在这里。</p>
+    )}
+    <div class="sidebar-note">
+      <h2>一起走这段路</h2>
+      <p>从小项目出发，记录 Agent，也记录构建它所需的工程知识。</p>
+      {rssEnabled && <a href="/rss.xml">订阅更新</a>}
+    </div>
+  </aside>
+</div>
+<script>
+  import { onPageChange } from "../scripts/page-lifecycle";
+  onPageChange((signal) => {
+    const root = document.querySelector("[data-blog-index]");
+    if (root) {
+      const posts = Array.from(
+        root.querySelectorAll<HTMLElement>("[data-post-tags]"),
+      );
+      const buttons = Array.from(
+        root.querySelectorAll<HTMLButtonElement>("[data-filter]"),
+      );
+      buttons.forEach((button) =>
+        button.addEventListener(
+          "click",
+          () => {
+            const selected = button.dataset.filter;
+            let count = 0;
+            posts.forEach((post) => {
+              post.hidden =
+                !!selected &&
+                !JSON.parse(post.dataset.postTags || "[]").includes(selected);
+              if (!post.hidden) count++;
+            });
+            buttons.forEach((item) => {
+              const active = item === button;
+              item.classList.toggle("selected", active);
+              item.setAttribute("aria-pressed", String(active));
+            });
+            root.querySelector<HTMLElement>(
+              "[data-list-caption]",
+            )!.textContent = count
+              ? `${count} 篇文章，按发布时间排列`
+              : "每一步，都值得记录";
+            root.querySelector<HTMLElement>("[data-filter-empty]")!.hidden =
+              count > 0;
+          },
+          { signal },
+        ),
+      );
+    }
+  });
+</script>

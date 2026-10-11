@@ -1,0 +1,33 @@
+---
+import { rssEnabled } from "../../data/site.js";
+const { kind = "文章", compact = false } = Astro.props;
+---
+
+<div
+  class={`empty-state tw:flex tw:items-start tw:gap-[20px] tw:border tw:border-solid tw:border-line tw:rounded-[8px] tw:bg-panel ${compact ? "compact tw:p-[26px]" : "tw:p-[29px]"} tw:mobile:py-[22px] tw:mobile:px-[18px] tw:mobile:gap-[14px]`}
+>
+  <span
+    class="empty-symbol tw:text-[var(--tone-849ab6)] tw:text-[24px] tw:leading-[1.5] tw:mobile:text-[21px]"
+    aria-hidden="true"
+  >
+    ✎
+  </span>
+  <div>
+    <h3 class="tw:text-[16px] tw:font-medium tw:mb-[10px] tw:mobile:text-[15px]">
+      {kind}准备中
+    </h3>
+    <p class="tw:text-muted tw:text-[13px] tw:leading-[1.9] tw:max-w-[570px] tw:mobile:text-[12px]">
+      {kind === "系列"
+        ? "把一次次实践串成一条学习路径。整理完成后，会在这里与你见面。"
+        : "第一篇学习记录还在整理。关于 Agent 的理解、踩过的坑和动手过程，会慢慢写在这里。"}
+    </p>
+    {rssEnabled && (
+      <a
+        class="tw:inline-block tw:mt-[18px] tw:text-[12px] tw:text-accent"
+        href="/rss.xml"
+      >
+        通过 RSS 等待更新
+      </a>
+    )}
+  </div>
+</div>

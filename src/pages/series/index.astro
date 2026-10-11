@@ -1,0 +1,38 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import PageHeading from "../../components/PageHeading.astro";
+import EmptyState from "../../components/EmptyState.astro";
+import { getSeries } from "../../../lib/content.mjs";
+const metadata = {
+  title: "系列专题",
+  alternates: { canonical: "/series" },
+};
+
+const items = getSeries();
+---
+
+<Layout
+  title={metadata.title}
+  description={metadata.description}
+  canonical={metadata.alternates?.canonical}
+>
+  <>
+    <PageHeading
+      title="系列专题"
+      subtitle="把零散的实践串起来，沿着一条学习路径往前走。"
+    />
+    {items.length ? (
+      <div class="series-list">
+        {items.map((item) => (
+          <a class="series-card" href={`/series/${item.slug}`}>
+            <h2>{item.title}</h2>
+            <p>{item.description}</p>
+            <span>{item.posts.length} 篇记录</span>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <EmptyState kind="系列" />
+    )}
+  </>
+</Layout>

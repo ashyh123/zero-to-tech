@@ -1,0 +1,136 @@
+---
+import "../../css/blog.css";
+import "../../css/tailwind.css";
+import "../../css/themes.css";
+import { ClientRouter } from "astro:transitions";
+import MeteorBackground from "../components/MeteorBackground.astro";
+import InitialLoader from "../components/InitialLoader.astro";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import { rssEnabled, site, siteUrl } from "../../data/site.js";
+const {
+  title,
+  description = site.description,
+  canonical = Astro.url.pathname,
+  article,
+  noindex = false,
+} = Astro.props;
+const pageTitle = title ? `${title} | ${site.name}` : site.name;
+const url = new URL(canonical, siteUrl).href;
+---
+
+<!doctype html>
+<html lang="zh-CN" transition:animate="none">
+  <head>
+    <ClientRouter fallback="swap" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={url} />
+    {rssEnabled && (
+      <link
+        rel="alternate"
+        type="application/rss+xml"
+        title={site.name}
+        href="/rss.xml"
+      />
+    )}
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:type" content={article ? "article" : "website"} />
+    {article && (
+      <meta property="article:published_time" content={article.date} />
+    )}
+    {article?.updated && (
+      <meta property="article:modified_time" content={article.updated} />
+    )}
+    {noindex && <meta name="robots" content="noindex" />}
+    <script is:inline>
+      try {
+        const saved = localStorage.getItem("site-theme");
+        const mode = ["light", "dark"].includes(saved) ? saved : "system";
+        document.documentElement.dataset.themePreference = mode;
+        document.documentElement.dataset.theme =
+          mode === "system"
+            ? matchMedia("(prefers-color-scheme: dark)").matches
+              ? "dark"
+              : "light"
+            : mode;
+      } catch {
+        document.documentElement.dataset.themePreference = "system";
+        document.documentElement.dataset.theme = matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches
+          ? "dark"
+          : "light";
+      }
+    </script>
+    <script is:inline>
+      // Keep the entrance for direct visits and refreshes, not internal links.
+      try {
+        const navigation = performance.getEntriesByType("navigation")[0];
+        const fromThisSite =
+          document.referrer &&
+          new URL(document.referrer).origin === location.origin;
+        if (
+          navigation?.type === "back_forward" ||
+          (navigation?.type === "navigate" && fromThisSite)
+        ) {
+          document.documentElement.dataset.skipEntry = "true";
+        }
+      } catch {}
+    </script>
+    <style is:global>
+      html[data-skip-entry="true"] .initial-loader {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="site-meteors"
+      transition:persist="site-meteors"
+      transition:animate="none"
+    >
+      <MeteorBackground />
+    </div>
+    <InitialLoader />
+    <noscript>
+      <style is:inline>
+        .initial-loader {
+          display: none !important;
+        }
+        .theme-switcher {
+          display: none;
+        }
+        @media (max-width: 700px) {
+          .site-navigation-panel {
+            display: flex;
+          }
+          .mobile-menu-toggle {
+            display: none;
+          }
+        }
+      </style>
+    </noscript>
+    <a class="skip-link" href="#main-content">
+      跳到主要内容
+    </a>
+    <div class="site-shell tw:relative tw:z-[1] tw:flex tw:flex-col tw:min-h-screen">
+      <SiteHeader />
+      <div class="site-main tw:w-full tw:max-w-[1100px] tw:mx-auto tw:px-[32px] tw:pt-[48px] tw:min-w-0 tw:flex tw:flex-1 tw:flex-col tw:mobile:px-[22px] tw:mobile:pt-[29px]">
+        <main id="main-content" tabindex="-1">
+          <slot />
+        </main>
+        <SiteFooter />
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  import "../scripts/transitions";
+</script>

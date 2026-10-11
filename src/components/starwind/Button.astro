@@ -1,0 +1,14 @@
+---
+import { Button } from "@starwind-ui/astro/button";
+const { class: className, ...props } = Astro.props;
+---
+
+<Button.Root
+  {...props}
+  class:list={[
+    "tw:cursor-pointer tw:disabled:opacity-50 tw:disabled:cursor-not-allowed",
+    className,
+  ]}
+>
+  <slot />
+</Button.Root>

@@ -1,0 +1,123 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import {
+  getPosts,
+  getPost,
+  getSeries,
+  renderMarkdown,
+} from "../../../lib/content.mjs";
+import { formatDate } from "../../../lib/date.mjs";
+import PageHeading from "../../components/PageHeading.astro";
+import EmptyState from "../../components/EmptyState.astro";
+import { rssEnabled, site } from "../../../data/site.js";
+export function getStaticPaths() {
+  return getPosts().map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+const { post } = Astro.props;
+const { html, headings } = await renderMarkdown(post.body);
+const series = getSeries().find((item) => item.slug === post.series);
+const index = series?.posts.findIndex((item) => item.slug === post.slug);
+const previous = series?.posts[index - 1];
+const next = series?.posts[index + 1];
+const related = getPosts()
+  .filter(
+    (item) =>
+      item.slug !== post.slug &&
+      item.tags.some((tag) => post.tags.includes(tag)),
+  )
+  .slice(0, 3);
+---
+
+<Layout
+  title={post.title}
+  description={post.summary}
+  canonical={`/blog/${Astro.params.slug}`}
+  article={post}
+>
+  <>
+    <a class="back-link" href="/blog">
+      返回学习记录
+    </a>
+    <header class="article-heading">
+      <div class="post-meta">
+        <time datetime={post.date}>{formatDate(post.date)}</time>
+        <span>{post.readingMinutes} 分钟阅读</span>
+        {post.updated && <span>更新于 {formatDate(post.updated)}</span>}
+      </div>
+      <h1>{post.title}</h1>
+      <p>{post.summary}</p>
+      <div class="tag-list">
+        {post.tags.map((tag) => (
+          <span class="tag">{tag}</span>
+        ))}
+      </div>
+      {series && (
+        <a class="series-label" href={`/series/${series.slug}`}>
+          {series.title} / 第 {index + 1} 篇
+        </a>
+      )}
+    </header>
+    <div class="reading-layout article-layout">
+      <article>
+        <div class="prose" set:html={html} />
+        <div class="article-contact">
+          <h2>一起交流</h2>
+          <p>你也遇到过类似的问题吗？欢迎分享你的实践。</p>
+          <div class="contact-links">
+            <a href={site.github}>GitHub</a>
+            <a href={`mailto:${site.email}`}>邮箱联系</a>
+            {rssEnabled && <a href="/rss.xml">RSS 订阅</a>}
+          </div>
+        </div>
+        {series && (
+          <nav aria-label="系列文章导航" class="article-pagination">
+            {previous ? (
+              <a href={`/blog/${previous.slug}`}>
+                <span>上一篇</span>
+                {previous.title}
+              </a>
+            ) : (
+              <span />
+            )}
+            {next && (
+              <a href={`/blog/${next.slug}`}>
+                <span>下一篇</span>
+                {next.title}
+              </a>
+            )}
+          </nav>
+        )}
+        {related.length > 0 && (
+          <section class="related-posts">
+            <h2>继续阅读</h2>
+            {related.map((item) => (
+              <a href={`/blog/${item.slug}`}>{item.title}</a>
+            ))}
+          </section>
+        )}
+      </article>
+      <aside class="sidebar toc">
+        <details open>
+          <summary>文章目录</summary>
+          {headings.length ? (
+            <nav aria-label="文章目录">
+              {headings.map((heading) => (
+                <a
+                  class={heading.depth === 3 ? "toc-nested" : ""}
+                  href={`#${heading.id}`}
+                >
+                  {heading.title}
+                </a>
+              ))}
+            </nav>
+          ) : (
+            <p>这篇文章没有分节标题。</p>
+          )}
+        </details>
+      </aside>
+    </div>
+  </>
+</Layout>

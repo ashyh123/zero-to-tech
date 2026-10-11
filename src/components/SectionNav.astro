@@ -1,0 +1,85 @@
+---
+const { items } = Astro.props;
+---
+
+<aside class="about-contents tw:sticky tw:top-[112px] tw:self-start tw:mt-[38px] tw:single:static tw:single:row-start-1 tw:single:mt-0">
+  <nav aria-label="关于页章节目录" data-section-navigation>
+    <p class="tw:mb-[16px] tw:text-[12px] tw:text-muted">本页目录</p>
+    <ol class="tw:m-0 tw:p-0 tw:list-none tw:border-0 tw:border-l tw:border-solid tw:border-line">
+      {items.map((item, index) => (
+        <li>
+          <a
+            class="section-link tw:relative tw:block tw:py-[10px] tw:pl-[22px] tw:pr-[8px] tw:text-[13px] tw:leading-[1.7] tw:text-muted tw:transition-colors tw:hover:text-accent"
+            href={`#${item.id}`}
+            aria-current={index === 0 ? "location" : undefined}
+          >
+            {item.title}
+          </a>
+        </li>
+      ))}
+    </ol>
+  </nav>
+</aside>
+<style>
+  .section-link[aria-current="location"] {
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .section-link[aria-current="location"]::before {
+    content: "";
+    position: absolute;
+    left: -1.5px;
+    top: 50%;
+    width: 2px;
+    height: 20px;
+    border-radius: 2px;
+    background: var(--accent);
+    transform: translateY(-50%);
+  }
+</style>
+<script>
+  import { onPageChange } from "../scripts/page-lifecycle";
+  onPageChange((signal) => {
+    const nav = document.querySelector("[data-section-navigation]");
+    if (!nav) return;
+    const links = [...nav.querySelectorAll<HTMLAnchorElement>('a[href^="#"]')];
+    const headings = links.map((link) =>
+      document.getElementById(link.hash.slice(1)),
+    );
+    let frame = 0;
+    function select(index: number) {
+      links.forEach((link, i) => {
+        if (i === index) link.setAttribute("aria-current", "location");
+        else link.removeAttribute("aria-current");
+      });
+    }
+    function update() {
+      frame = 0;
+      const top =
+        (document.querySelector<HTMLElement>(".site-header")?.offsetHeight ||
+          80) + 28;
+      let current = 0;
+      headings.forEach((heading, i) => {
+        if (heading && heading.getBoundingClientRect().top <= top) current = i;
+      });
+      if (
+        scrollY > 0 &&
+        scrollY + innerHeight >= document.documentElement.scrollHeight - 2
+      )
+        current = links.length - 1;
+      select(current);
+    }
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    window.addEventListener("scroll", schedule, { passive: true, signal });
+    window.addEventListener("resize", schedule, { signal });
+    signal.addEventListener("abort", () => cancelAnimationFrame(frame), {
+      once: true,
+    });
+    links.forEach((link, i) =>
+      link.addEventListener("click", () => select(i), { signal }),
+    );
+    update();
+  });
+</script>

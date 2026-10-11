@@ -1,0 +1,42 @@
+---
+import { formatDate } from "../../lib/date.mjs";
+const { posts } = Astro.props;
+---
+
+<div class="post-list">
+  {posts.map((post) => (
+    <article
+      data-post-tags={JSON.stringify(post.tags)}
+      class="post-preview tw:py-[26px] tw:border-0 tw:border-b tw:border-solid tw:border-line tw:first:pt-[10px] tw:grid tw:grid-cols-[66px_minmax(0,1fr)] tw:gap-[23px] tw:mobile:grid-cols-[47px_minmax(0,1fr)] tw:mobile:gap-[15px]"
+    >
+      <time
+        class="post-date tw:flex tw:flex-col tw:border-0 tw:border-r tw:border-solid tw:border-line tw:text-muted tw:text-[12px] tw:pr-[16px] tw:mt-[4px] tw:leading-[1.9] tw:mobile:text-[10px] tw:mobile:pr-[10px]"
+        datetime={post.date}
+        aria-label={formatDate(post.date)}
+      >
+        <span>{post.date.slice(0, 4)}</span>
+        <span>{post.date.slice(5)}</span>
+      </time>
+      <div class="post-summary tw:min-w-0">
+        <h2 class="tw:mb-[10px] tw:text-[21px] tw:leading-[1.6] tw:mobile:text-[18px]">
+          <a href={`/blog/${post.slug}`}>{post.title}</a>
+        </h2>
+        <p class="tw:text-muted tw:text-[13px] tw:leading-[1.9] tw:mb-[16px] tw:mobile:text-[12px]">
+          {post.summary}
+        </p>
+        <div class="post-row-footer tw:flex tw:gap-[15px] tw:items-center tw:justify-between tw:mobile:items-start tw:mobile:flex-col tw:mobile:gap-[12px]">
+          <div class="tw:flex tw:flex-wrap tw:gap-[8px]">
+            {post.tags.map((tag) => (
+              <span class="tw:inline-block tw:py-[3px] tw:px-[10px] tw:border tw:border-solid tw:border-line tw:rounded-[5px] tw:bg-[var(--tone-1b222c)] tw:text-[12px] tw:leading-[1.7] tw:text-[var(--tone-b3bfd0)]">
+                {tag}
+              </span>
+            ))}
+          </div>
+          <span class="reading-duration tw:text-muted tw:text-[11px] tw:whitespace-nowrap">
+            {post.readingMinutes} 分钟阅读
+          </span>
+        </div>
+      </div>
+    </article>
+  ))}
+</div>

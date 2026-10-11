@@ -1,0 +1,34 @@
+/* Incremental migration: preserve the existing reset and namespace utilities. */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme) prefix(tw);
+@import "tailwindcss/utilities.css" layer(utilities) prefix(tw) source(none);
+@source "../src";
+
+/* Match the existing inclusive breakpoints during migration. */
+@custom-variant compact (@media (max-width: 1150px));
+@custom-variant single (@media (max-width: 900px));
+@custom-variant mobile (@media (max-width: 700px));
+
+@theme inline {
+  --color-page: var(--paper);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-line: var(--line);
+  --color-panel: var(--white);
+}
+
+@theme {
+  --color-sidebar: var(--tone-12161b);
+  --color-nav: var(--tone-b3bece);
+  --color-nav-icon: var(--tone-9eacc0);
+  --color-nav-hover: var(--tone-191f28);
+  --color-nav-active: var(--tone-202b3a);
+  --color-nav-active-border: var(--tone-2c3a4d);
+  --color-loader-bg: var(--tone-090909);
+  --color-loader-ink: var(--tone-f1f1f1);
+  --color-loader-muted: var(--tone-888);
+  --color-loader-note: var(--tone-707070);
+  --font-loader: "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-loader-mono: "SFMono-Regular", Consolas, monospace;
+}
