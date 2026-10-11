@@ -1,0 +1,103 @@
+# Pages CMS edits the existing Markdown files; Astro remains a static site.
+media:
+  - name: images
+    label: 图片
+    input: public/images
+    output: /images
+    extensions: [jpg, jpeg, png, webp, gif, avif]
+    rename: random
+
+content:
+  - name: posts
+    label: 文章与学习记录
+    type: collection
+    path: content/posts
+    format: yaml-frontmatter
+    subfolders: false
+    exclude: [.gitkeep]
+    filename: "{fields.slug}.md"
+    view:
+      primary: title
+      fields: [title, date, draft, tags]
+      sort: [date, title]
+      search: [title, summary, tags, slug]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: 标题
+        type: string
+        required: true
+      - name: slug
+        label: 文章链接标识
+        type: string
+        required: true
+        description: 例如 my-first-agent。发布后保持不变，避免旧链接失效。
+        pattern:
+          regex: "^(?!preparing$)[a-z0-9]+(?:-[a-z0-9]+)*$"
+          message: 使用小写英文字母、数字和单连字符；不能使用 preparing。
+      - name: summary
+        label: 摘要
+        type: text
+        required: true
+        description: 用一两句话说明这篇文章或学习记录的内容。
+      - name: date
+        label: 发布日期
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd
+          time: false
+        description: 日期用于排序，不会自动定时发布。
+      - name: updated
+        label: 更新日期（可选）
+        type: date
+        default: ""
+        options:
+          format: yyyy-MM-dd
+          time: false
+        description: 留空即可；填写时不能早于发布日期。
+      - name: tags
+        label: 标签
+        type: string
+        list: true
+        default: [学习记录]
+        description: 学习笔记可使用“学习记录”，也可以添加 Agent、实践等标签。
+      - name: draft
+        label: 草稿（开启时不在网站显示）
+        type: boolean
+        default: true
+        description: 保存会提交到 GitHub。确认正文后关闭草稿，再保存即可触发上线。
+      - name: series
+        label: 系列标识（可选）
+        type: string
+        description: 仅填写 content/series.json 中已定义的系列标识。普通文章留空。
+        pattern:
+          regex: "^(?!preparing$)[a-z0-9]+(?:-[a-z0-9]+)*$"
+          message: 使用已有系列的小写英文标识。
+      - name: order
+        label: 系列中的顺序（可选）
+        type: number
+        options:
+          min: 1
+        description: 加入系列时填写正整数，且不能与同系列文章重复。
+      - name: body
+        label: 正文
+        type: rich-text
+        required: true
+        options:
+          format: markdown
+          media: images
+          switcher: true
+        description: 支持标题、列表、图片和代码块；复杂 Markdown 可切换 Source 编辑。
+
+settings:
+  content:
+    merge: true
+  commit:
+    templates:
+      create: "content: create {path} via Pages CMS"
+      update: "content: update {path} via Pages CMS"
+      delete: "content: delete {path} via Pages CMS"
+      rename: "content: rename {oldPath} to {newPath} via Pages CMS"

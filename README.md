@@ -64,6 +64,10 @@ draft: true
 
 没有公开文章时，文章与系列显示“准备中”，不会生成虚构内容或占位详情页。Astro 只为公开内容生成动态路径。
 
+## 网页写作后台
+
+仓库已提供 Pages CMS 配置 `.pages.yml`。连接 GitHub 后，可通过 [Pages CMS](https://app.pagescms.org) 管理文章、学习记录与图片。新文章默认是草稿；关闭草稿并保存到 `main` 后，现有流程自动更新原服务器与 Cloudflare Pages。首次授权、写作步骤和发布检查见 [使用说明](docs/pages-cms.md)。
+
 ## 系列
 
 在 `content/series.json` 添加定义：
