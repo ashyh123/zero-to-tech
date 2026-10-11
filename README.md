@@ -31,7 +31,7 @@ SITE_URL=http://你的域名
 
 不要填写路径或末尾斜杠。HTTPS 开通后改为 `https://你的域名` 并重新构建。这个值用于 canonical、RSS、sitemap 和分享链接；未设置时使用本地地址，不适合直接发布。
 
-CI 使用仓库变量 `SITE_URL`，不读取本机 `.env.local`。源码提交后推送到仓库不会自动复制本机环境变量。
+服务器 CI 使用仓库变量 `SITE_URL`；Pages 构建使用工作流中独立配置的免费地址，不读取本机 `.env.local`。源码提交后推送到仓库不会自动复制本机环境变量。
 
 ## RSS 发布开关
 
@@ -110,7 +110,7 @@ Tailwind 4 通过 `astro.config.mjs` 中的 Vite 插件接入，入口为 `css/t
 
 ## 自动构建与发布
 
-`.github/workflows/publish.yml` 在推送 main / master 时执行测试、构建并保存 `static-blog` 产物。未启用部署时只构建，不连接服务器。
+`.github/workflows/publish.yml` 在推送 main / master 时执行测试、构建并保存 `static-blog` 产物。服务器部署由 `DEPLOY_ENABLED` 控制；Cloudflare Pages 在测试通过后独立构建并发布。
 
 完成以下配置后，将仓库变量 `DEPLOY_ENABLED` 设为 `true`：
 
@@ -132,6 +132,8 @@ Nginx 的 `root` 指向 `$DEPLOY_ROOT/current`，将 `deploy/nginx.conf` 的示�
 部署脚本先上传到 `releases/运行编号-重试编号`，全部成功后通过原子替换 `current` 符号链接切换版本。测试、构建或上传失败时保留上一版。新版本继承旧版带哈希的静态资源，避免已打开页面在切换后丢失脚本。旧版本不会自动删除；需要时由维护者清理。回滚可以将 `current` 原子切回已确认的旧 release。
 
 当前仓库已配置自动发布：公开地址为 `http://ashyh666.me`，部署用户为 `blogdeploy`，发布根目录为 `/var/www/agent-journey`。推送 `main` 后自动测试、构建并部署；专用密钥仅保存在本机 SSH 目录和 GitHub Actions Secrets 中，不提交到仓库。HTTPS 开通后修改仓库变量 `SITE_URL` 并重新发布。
+
+Cloudflare Pages 同时自动更新：[https://evan-huang-blog.pages.dev](https://evan-huang-blog.pages.dev)。现有 Direct Upload 项目通过 GitHub Actions 的 Wrangler 发布，保留原免费地址。仓库 Secrets `CLOUDFLARE_API_TOKEN` 保存仅包含当前账户 Pages 编辑权限的凭据，`CLOUDFLARE_ACCOUNT_ID` 保存账户 ID。Pages 使用独立的 `SITE_URL` 和 `RSS_ENABLED=true` 构建，网站地图、RSS 和规范链接指向 Pages 地址。推送 `main` 后，服务器和 Pages 在测试通过后分别部署；域名、DNS 与原服务器配置不变。
 
 发布记录与维护方式见 `docs/production.md`。
 
