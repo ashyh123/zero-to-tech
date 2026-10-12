@@ -1,7 +1,29 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import PageHeading from "../components/PageHeading.astro";
-const metadata = { title: "作品", alternates: { canonical: "/works" } };
+const metadata = {
+  title: "作品",
+  description: "Agent Harness 与 mini-swe：从 Agent 任务执行到编码代理模型路由的工程实践。",
+  alternates: { canonical: "/works" },
+};
+const projects = [
+  {
+    name: "Agent Harness",
+    category: "Agent 工程",
+    summary: "围绕 Agent 任务执行搭建的工程实验项目，探索工具调用、Skill、上下文管理与执行预算。",
+    detail: "使用 LangGraph 管理执行循环，记录任务运行与产物，并实践检查点、审批暂停和跨进程恢复。",
+    tags: ["TypeScript", "Python", "LangGraph", "Agent"],
+    url: "https://github.com/ashyh123/agent-harness",
+  },
+  {
+    name: "mini-swe",
+    category: "编码 Agent",
+    summary: "一个带模型路由的轻量编码代理：先判断任务难度，再选择模型完成读代码、修改、测试与提交。",
+    detail: "将路由放在代理循环外，保持单次任务的模型选择稳定；通过任务评测对比 cheap、strong 与 router 模式的成功率和成本。",
+    tags: ["Python", "模型路由", "工具调用", "评测"],
+    url: null,
+  },
+];
 ---
 
 <Layout
@@ -14,6 +36,26 @@ const metadata = { title: "作品", alternates: { canonical: "/works" } };
       title="把想法做出来"
       subtitle="从小项目开始，理解代码怎样变成一个可以使用的东西。"
     />
+    <div class="tw:grid tw:gap-5">
+      {projects.map((project) => (
+        <article class="tw:rounded-lg tw:border tw:border-line tw:bg-panel tw:p-7 tw:mobile:p-5">
+          <p class="tw:text-xs tw:text-accent">{project.category}</p>
+          <h2 class="tw:mt-3 tw:text-2xl tw:font-semibold tw:text-ink">{project.name}</h2>
+          <p class="tw:mt-4 tw:text-sm tw:leading-7 tw:text-ink">{project.summary}</p>
+          <p class="tw:mt-2 tw:text-sm tw:leading-7 tw:text-muted">{project.detail}</p>
+          <ul aria-label={`${project.name} 技术与方向`} class="tw:mt-5 tw:flex tw:flex-wrap tw:gap-2 tw:list-none tw:p-0">
+            {project.tags.map((tag) => (
+              <li class="tw:rounded tw:border tw:border-line tw:px-3 tw:py-1 tw:text-xs tw:text-muted">{tag}</li>
+            ))}
+          </ul>
+          {project.url && (
+            <a href={project.url} target="_blank" rel="noopener noreferrer" class="tw:mt-6 tw:inline-flex tw:items-center tw:gap-2 tw:text-sm tw:text-accent tw:underline-offset-4 tw:hover:underline tw:focus-visible:outline-2 tw:focus-visible:outline-offset-4">
+              查看 {project.name} 源码 <span aria-hidden="true">↗</span>
+            </a>
+          )}
+        </article>
+      ))}
+    </div>
     <p class="works-footnote">更多项目，随着学习慢慢积累。</p>
   </>
 </Layout>
