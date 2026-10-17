@@ -17,9 +17,16 @@ import { site } from "../../data/site.js";
     <div class="header-identity tw:relative tw:mobile:pr-[94px] tw:mobile:min-h-[38px] tw:mobile:flex tw:mobile:items-center">
       <a
         href="/"
-        class="wordmark nav-capsule tw:inline-flex tw:py-[8px] tw:px-[14px] tw:border tw:border-solid tw:border-transparent tw:rounded-full tw:mobile:py-[6px] tw:mobile:px-[12px] tw:text-[17px] tw:leading-[1.6] tw:font-semibold tw:tracking-[0.01em] tw:mobile:text-[15px] tw:mobile:leading-[1.5]"
+        class="wordmark nav-capsule tw:inline-flex tw:items-center tw:gap-[10px] tw:py-[8px] tw:px-[14px] tw:border tw:border-solid tw:border-transparent tw:rounded-full tw:mobile:py-[6px] tw:mobile:px-[12px] tw:text-[17px] tw:leading-[1.6] tw:font-semibold tw:tracking-[0.01em] tw:mobile:text-[15px] tw:mobile:leading-[1.5]"
         aria-label={`${site.author}，首页`}
       >
+        <img
+          src="/images/avatar.png"
+          alt=""
+          width="28"
+          height="28"
+          class="tw:block tw:size-[28px] tw:shrink-0 tw:rounded-full tw:object-cover tw:ring tw:ring-line tw:mobile:size-[24px]"
+        />
         {site.author}
       </a>
       <Button
