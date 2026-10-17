@@ -21,13 +21,12 @@ const pathname =
     const active =
       href === "/"
         ? pathname === "/"
-        : pathname === href ||
-          pathname.startsWith(`${href}/`);
+        : pathname === href || pathname.startsWith(`${href}/`);
     return (
       <a
         href={href}
         aria-current={active ? "page" : undefined}
-        class={`nav-capsule tw:flex tw:items-center tw:gap-[8px] tw:py-[8px] tw:px-[12px] tw:border tw:border-solid tw:rounded-[6px] tw:text-[14px] tw:mobile:py-[10px] tw:mobile:px-[13px] ${active ? "tw:text-accent tw:bg-nav-active tw:border-nav-active-border tw:hover:text-accent tw:hover:bg-nav-active" : "tw:text-nav tw:border-transparent tw:hover:bg-nav-hover tw:hover:text-ink"}`}
+        class="nav-capsule tw:inline-flex tw:items-center tw:justify-center tw:min-h-[38px] tw:gap-[8px] tw:py-[8px] tw:px-[16px] tw:text-[14px] tw:font-medium tw:mobile:px-[14px]"
       >
         <span>{label}</span>
       </a>

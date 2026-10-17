@@ -17,7 +17,7 @@ import { site } from "../../data/site.js";
     <div class="header-identity tw:relative tw:mobile:pr-[94px] tw:mobile:min-h-[38px] tw:mobile:flex tw:mobile:items-center">
       <a
         href="/"
-        class="wordmark nav-capsule tw:inline-flex tw:items-center tw:gap-[10px] tw:py-[8px] tw:px-[14px] tw:border tw:border-solid tw:border-transparent tw:rounded-full tw:mobile:py-[6px] tw:mobile:px-[12px] tw:text-[17px] tw:leading-[1.6] tw:font-semibold tw:tracking-[0.01em] tw:mobile:text-[15px] tw:mobile:leading-[1.5]"
+        class="wordmark nav-capsule tw:inline-flex tw:items-center tw:gap-[10px] tw:py-[8px] tw:px-[14px] tw:mobile:py-[6px] tw:mobile:px-[12px] tw:text-[17px] tw:leading-[1.6] tw:font-semibold tw:tracking-[0.01em] tw:mobile:text-[15px] tw:mobile:leading-[1.5]"
         aria-label={`${site.author}，首页`}
       >
         <img
@@ -30,7 +30,7 @@ import { site } from "../../data/site.js";
         {site.author}
       </a>
       <Button
-        class="mobile-menu-toggle nav-capsule tw:hidden tw:mobile:absolute tw:mobile:right-0 tw:mobile:top-0 tw:mobile:grid tw:mobile:place-items-center tw:mobile:w-[38px] tw:mobile:h-[38px] tw:mobile:border tw:mobile:border-solid tw:mobile:border-line tw:mobile:rounded-full tw:mobile:bg-[var(--tone-19212b)] tw:mobile:text-[var(--tone-c8d4e5)] tw:mobile:cursor-pointer"
+        class="mobile-menu-toggle nav-capsule tw:hidden tw:mobile:absolute tw:mobile:right-0 tw:mobile:top-0 tw:mobile:grid tw:mobile:place-items-center tw:mobile:w-[38px] tw:mobile:h-[38px] tw:mobile:text-[var(--tone-c8d4e5)] tw:mobile:cursor-pointer"
         aria-label="打开导航菜单"
         aria-expanded="false"
         aria-controls="site-navigation-panel"
@@ -63,21 +63,57 @@ import { site } from "../../data/site.js";
 </script>
 
 <style is:global>
-  .site-header[data-floating="true"] .nav-capsule {
-    border-radius: 999px;
-    border-color: var(--line);
-    background: var(--paper);
-    box-shadow: 0 4px 16px rgba(12, 30, 55, 0.08);
+  .site-header {
+    --glass-sheen: rgba(255, 255, 255, 0.1);
+    --glass-edge: rgba(255, 255, 255, 0.18);
   }
-  @supports (backdrop-filter: blur(0)) or (-webkit-backdrop-filter: blur(0)) {
-    .site-header[data-floating="true"] .nav-capsule {
-      background: color-mix(in srgb, var(--paper) 72%, transparent);
-      -webkit-backdrop-filter: blur(18px) saturate(140%);
-      backdrop-filter: blur(18px) saturate(140%);
-    }
-    .site-header[data-floating="true"] .nav-capsule[aria-current="page"] {
-      background: color-mix(in srgb, var(--tone-202b3a) 78%, transparent);
-      border-color: var(--tone-2c3a4d);
+  :root[data-theme="light"] .site-header {
+    --glass-sheen: rgba(255, 255, 255, 0.85);
+    --glass-edge: rgba(255, 255, 255, 0.95);
+  }
+  .site-header .nav-capsule {
+    border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
+    border-radius: 999px;
+    background:
+      linear-gradient(145deg, var(--glass-sheen), transparent 70%),
+      color-mix(in srgb, var(--paper) 42%, transparent);
+    color: var(--ink);
+    box-shadow:
+      inset 0 1px 0 var(--glass-edge),
+      0 3px 12px rgba(12, 30, 55, 0.06);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    backdrop-filter: blur(18px) saturate(150%);
+    white-space: nowrap;
+    transition:
+      background-color 180ms ease,
+      border-color 180ms ease,
+      box-shadow 180ms ease,
+      color 180ms ease;
+  }
+  .site-header .nav-capsule:hover {
+    background-color: color-mix(in srgb, var(--accent) 12%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  }
+  .site-header .nav-capsule[aria-current="page"] {
+    background-color: color-mix(in srgb, var(--accent) 18%, transparent);
+    border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+    color: var(--accent-dark);
+  }
+  .site-header .nav-capsule:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+  .site-header .nav-capsule:active {
+    box-shadow: inset 0 1px 3px rgba(12, 30, 55, 0.15);
+  }
+  .site-header[data-floating="true"] .nav-capsule {
+    box-shadow:
+      inset 0 1px 0 var(--glass-edge),
+      0 6px 20px rgba(12, 30, 55, 0.1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .site-header .nav-capsule {
+      transition: none;
     }
   }
 </style>
