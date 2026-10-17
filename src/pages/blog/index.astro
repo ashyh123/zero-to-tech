@@ -22,49 +22,64 @@ const posts = getPosts().map(({ body, ...post }) => post);
       title="学习记录"
       subtitle="把做过的事、遇到的问题和想明白的瞬间，留在这里。"
     />
-    <section
-      aria-labelledby="upcoming-heading"
-      class="tw:mb-[36px] tw:border tw:border-solid tw:border-line tw:rounded-[8px] tw:bg-panel tw:p-[24px] tw:mobile:p-[20px]"
-    >
-      <h2
-        id="upcoming-heading"
-        class="tw:mb-[16px] tw:text-[16px] tw:font-semibold"
-      >
-        待完成
-      </h2>
-      <div class="tw:grid tw:gap-[14px]">
-        {["第一次面试感想", "最近的思考"].map((title) => (
-          <label class="upcoming-item tw:flex tw:w-fit tw:items-center tw:gap-[12px] tw:cursor-pointer tw:text-[14px]">
-            <span class="tw:relative tw:flex tw:shrink-0">
-              <input type="checkbox" class="upcoming-checkbox" />
-              <svg
-                class="upcoming-check"
-                viewBox="0 0 16 16"
-                fill="none"
-                aria-hidden="true"
-              >
-                <path
-                  d="m3.5 8 3 3 6-6"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </span>
-            <span class="upcoming-title">{title}</span>
-          </label>
-        ))}
-      </div>
-    </section>
     <BlogIndex
       posts={posts}
       tags={[...new Set(posts.flatMap((post) => post.tags))].sort()}
-    />
+    >
+      <section
+        aria-labelledby="upcoming-heading"
+        class="tw:mb-[36px] tw:border tw:border-solid tw:border-line tw:rounded-[8px] tw:bg-panel tw:p-[24px] tw:mobile:p-[20px]"
+      >
+        <h2
+          id="upcoming-heading"
+          class="tw:mb-[16px] tw:text-[16px] tw:font-semibold"
+        >
+          待完成
+        </h2>
+        <div class="tw:grid tw:gap-[20px]">
+          {["第一次面试感想", "最近的思考"].map((title) => (
+            <label class="upcoming-item tw:relative tw:min-h-[32px] tw:flex tw:w-fit tw:items-center tw:gap-[12px] tw:cursor-pointer tw:text-[14px]">
+              <span class="tw:relative tw:flex tw:shrink-0">
+                <input
+                  type="checkbox"
+                  class="upcoming-checkbox"
+                  data-upcoming-task={title}
+                />
+                <svg
+                  class="upcoming-check"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="m3.5 8 3 3 6-6"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </span>
+              <span class="upcoming-title">{title}</span>
+            </label>
+          ))}
+        </div>
+      </section>
+    </BlogIndex>
   </>
 </Layout>
 
 <style>
+  .upcoming-item:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: 7.5px;
+    top: calc(50% + 12px);
+    width: 1px;
+    height: calc(100% - 4px);
+    background: var(--line);
+    pointer-events: none;
+  }
   .upcoming-checkbox {
     appearance: none;
     width: 16px;
@@ -100,3 +115,31 @@ const posts = getPosts().map(({ body, ...post }) => post);
     text-decoration: line-through;
   }
 </style>
+
+<script>
+  import { onPageChange } from "../../scripts/page-lifecycle";
+
+  onPageChange((signal) => {
+    document
+      .querySelectorAll<HTMLInputElement>("[data-upcoming-task]")
+      .forEach((checkbox) => {
+        const key = `upcoming-writing:${checkbox.dataset.upcomingTask}`;
+        try {
+          checkbox.checked = localStorage.getItem(key) === "true";
+        } catch {
+          // Browser privacy settings can block storage; keep the checkbox usable.
+        }
+        checkbox.addEventListener(
+          "change",
+          () => {
+            try {
+              localStorage.setItem(key, String(checkbox.checked));
+            } catch {
+              // The current selection still works when storage is unavailable.
+            }
+          },
+          { signal },
+        );
+      });
+  });
+</script>

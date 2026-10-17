@@ -7,17 +7,20 @@ const { posts, tags } = Astro.props;
 ---
 
 <div class="reading-layout" data-blog-index>
-  <section aria-label="文章列表">
-    <p class="list-caption" data-list-caption aria-live="polite">
-      {posts.length
-        ? `${posts.length} 篇文章，按发布时间排列`
-        : "每一步，都值得记录"}
-    </p>
-    <PostList posts={posts} />
-    <div data-filter-empty hidden={posts.length > 0}>
-      <EmptyState />
-    </div>
-  </section>
+  <div>
+    <slot />
+    <section aria-label="文章列表">
+      <p class="list-caption" data-list-caption aria-live="polite">
+        {posts.length
+          ? `${posts.length} 篇文章，按发布时间排列`
+          : "每一步，都值得记录"}
+      </p>
+      <PostList posts={posts} />
+      <div data-filter-empty hidden={posts.length > 0}>
+        <EmptyState />
+      </div>
+    </section>
+  </div>
   <aside class="sidebar">
     <h2>按标签浏览</h2>
     {tags.length ? (
