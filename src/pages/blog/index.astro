@@ -22,9 +22,81 @@ const posts = getPosts().map(({ body, ...post }) => post);
       title="学习记录"
       subtitle="把做过的事、遇到的问题和想明白的瞬间，留在这里。"
     />
+    <section
+      aria-labelledby="upcoming-heading"
+      class="tw:mb-[36px] tw:border tw:border-solid tw:border-line tw:rounded-[8px] tw:bg-panel tw:p-[24px] tw:mobile:p-[20px]"
+    >
+      <h2
+        id="upcoming-heading"
+        class="tw:mb-[16px] tw:text-[16px] tw:font-semibold"
+      >
+        待完成
+      </h2>
+      <div class="tw:grid tw:gap-[14px]">
+        {["第一次面试感想", "最近的思考"].map((title) => (
+          <label class="upcoming-item tw:flex tw:w-fit tw:items-center tw:gap-[12px] tw:cursor-pointer tw:text-[14px]">
+            <span class="tw:relative tw:flex tw:shrink-0">
+              <input type="checkbox" class="upcoming-checkbox" />
+              <svg
+                class="upcoming-check"
+                viewBox="0 0 16 16"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="m3.5 8 3 3 6-6"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </span>
+            <span class="upcoming-title">{title}</span>
+          </label>
+        ))}
+      </div>
+    </section>
     <BlogIndex
       posts={posts}
       tags={[...new Set(posts.flatMap((post) => post.tags))].sort()}
     />
   </>
 </Layout>
+
+<style>
+  .upcoming-checkbox {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    border: 1px solid var(--muted);
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+  }
+  .upcoming-checkbox:checked {
+    border-color: var(--ink);
+    background: var(--ink);
+  }
+  .upcoming-checkbox:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+  .upcoming-check {
+    position: absolute;
+    inset: 0;
+    width: 16px;
+    height: 16px;
+    color: var(--paper);
+    pointer-events: none;
+    visibility: hidden;
+  }
+  .upcoming-checkbox:checked + .upcoming-check {
+    visibility: visible;
+  }
+  .upcoming-item:has(:checked) .upcoming-title {
+    color: var(--muted);
+    text-decoration: line-through;
+  }
+</style>
