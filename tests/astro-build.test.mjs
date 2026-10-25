@@ -21,6 +21,7 @@ test(
         "css",
         "lib",
         "data",
+        "public",
         "astro.config.mjs",
         "tsconfig.json",
         "package.json",
@@ -59,7 +60,7 @@ test(
       ]) {
         await fs.writeFile(
           path.join(root, `content/posts/${slug}.md`),
-          `---\nslug: ${slug}\ntitle: "${slug}"\nsummary: "测试摘要 & 内容"\ndate: "2026-10-10"\ntags: [${tag}]\ndraft: ${draft}\nseries: test-series\norder: ${order}\n---\n## 开始实践\n\n正文。\n\n\`\`\`js\nconst answer = 42;\n\`\`\`\n\n<script>alert('unsafe')</script>\n`,
+          `---\nslug: ${slug}\ntitle: "${slug}"\nsummary: "测试摘要 & 内容"\ndate: "2026-10-10"\ntags: [${tag}]\ndraft: ${draft}\nseries: test-series\norder: ${order}\n---\n## 开始实践\n\n正文。\n\n[角色交互图](/interactive/ai-sdk-subagents/00-roles.html)\n\n[普通外链](https://example.com/diagram.html)\n\n<iframe src="https://example.com/unsafe"></iframe>\n\n\`\`\`js\nconst answer = 42;\n\`\`\`\n\n<script>alert('unsafe')</script>\n`,
         );
       }
       await promisify(execFile)(
@@ -89,6 +90,18 @@ test(
       );
       assert.match(article, /property="og:type" content="article"/);
       assert.doesNotMatch(article, /alert\('unsafe'\)/);
+      assert.match(
+        article,
+        /<iframe[^>]*src="\/interactive\/ai-sdk-subagents\/00-roles\.html"/,
+      );
+      assert.match(article, /sandbox="allow-scripts"/);
+      assert.match(article, /title="角色交互图"/);
+      assert.match(article, /href="https:\/\/example.com\/diagram.html"/);
+      assert.doesNotMatch(article, /https:\/\/example.com\/unsafe/);
+      assert.match(
+        await read("interactive/ai-sdk-subagents/00-roles.html"),
+        /diagram\.js/,
+      );
       assert.doesNotMatch(article, /_next\/|__NEXT_DATA__|astro-island/);
       const series = await read("series/test-series.html");
       assert.match(series, /test-first/);

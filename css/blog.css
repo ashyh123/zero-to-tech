@@ -493,6 +493,22 @@ button.tag {
   margin-top: 45px;
   padding-top: 25px;
 }
+.interactive-diagram {
+  margin: 26px 0;
+}
+.interactive-diagram iframe {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--soft);
+  color-scheme: light dark;
+}
+.interactive-diagram figcaption {
+  margin-top: 7px;
+  text-align: right;
+  font-size: 12px;
+}
 .article-contact h2,
 .related-posts h2 {
   font-size: 18px;

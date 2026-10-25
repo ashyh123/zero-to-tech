@@ -121,3 +121,49 @@ const related = getPosts()
     </div>
   </>
 </Layout>
+
+<script>
+  import { onPageChange } from "../../scripts/page-lifecycle";
+  onPageChange((signal) => {
+    const frames = Array.from(
+      document.querySelectorAll<HTMLIFrameElement>("iframe[data-note-diagram]"),
+    );
+    if (!frames.length) return;
+    const sendTheme = (frame: HTMLIFrameElement) =>
+      frame.contentWindow?.postMessage(
+        {
+          type: "note-diagram-theme",
+          theme: document.documentElement.dataset.theme,
+        },
+        "*",
+      );
+    window.addEventListener(
+      "message",
+      (event: MessageEvent<unknown>) => {
+        const frame = frames.find(
+          (item) => item.contentWindow === event.source,
+        );
+        const data = event.data;
+        if (!frame || !data || typeof data !== "object" || !("type" in data))
+          return;
+        if (data.type === "note-diagram-ready") sendTheme(frame);
+        if (
+          data.type === "note-diagram-size" &&
+          "height" in data &&
+          typeof data.height === "number" &&
+          Number.isFinite(data.height)
+        ) {
+          frame.style.height = `${Math.min(2000, Math.max(160, Math.ceil(data.height)))}px`;
+        }
+      },
+      { signal },
+    );
+    frames.forEach((frame) => sendTheme(frame));
+    const themes = new MutationObserver(() => frames.forEach(sendTheme));
+    themes.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+    signal.addEventListener("abort", () => themes.disconnect(), { once: true });
+  });
+</script>
