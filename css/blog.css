@@ -493,21 +493,94 @@ button.tag {
   margin-top: 45px;
   padding-top: 25px;
 }
-.interactive-diagram {
-  margin: 26px 0;
+.prose .process-diagram {
+  margin: 30px 0;
+  padding: 23px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: var(--soft);
+  font-family: var(--sans);
+  font-size: 14px;
 }
-.interactive-diagram iframe {
+.process-diagram figcaption {
+  margin-bottom: 20px;
+  color: var(--ink);
+  font-size: 15px;
+}
+.prose .process-diagram ol {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 18px;
+  list-style: none;
+  counter-reset: process;
+  padding: 0;
+  margin: 0;
+}
+.prose .process-diagram li {
+  counter-increment: process;
+  margin: 0;
+  padding: 0 0 0 13px;
+  border-left: 2px solid var(--line);
+}
+.process-diagram li::before {
+  content: counter(process, decimal-leading-zero);
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+.prose .process-diagram li p {
+  margin: 8px 0 0;
+  font-size: 13px;
+  line-height: 1.85;
+}
+.process-diagram button {
   display: block;
   width: 100%;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--soft);
-  color-scheme: light dark;
+  padding: 0;
+  border: 0;
+  text-align: left;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.7;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
 }
-.interactive-diagram figcaption {
-  margin-top: 7px;
-  text-align: right;
-  font-size: 12px;
+.process-diagram button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+.process-diagram button[aria-pressed="true"] {
+  color: var(--accent);
+}
+.prose .process-diagram li.is-current {
+  border-color: var(--accent);
+}
+.process-diagram[data-enhanced] li > p:nth-child(n + 3) {
+  display: none;
+}
+.process-detail {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  min-height: 90px;
+}
+.prose .process-detail p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.9;
+}
+@media (max-width: 700px) {
+  .prose .process-diagram {
+    padding: 19px;
+  }
+  .prose .process-diagram ol {
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 14px;
+  }
 }
 .article-contact h2,
 .related-posts h2 {

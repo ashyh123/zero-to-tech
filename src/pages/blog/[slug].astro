@@ -125,45 +125,45 @@ const related = getPosts()
 <script>
   import { onPageChange } from "../../scripts/page-lifecycle";
   onPageChange((signal) => {
-    const frames = Array.from(
-      document.querySelectorAll<HTMLIFrameElement>("iframe[data-note-diagram]"),
-    );
-    if (!frames.length) return;
-    const sendTheme = (frame: HTMLIFrameElement) =>
-      frame.contentWindow?.postMessage(
-        {
-          type: "note-diagram-theme",
-          theme: document.documentElement.dataset.theme,
-        },
-        "*",
-      );
-    window.addEventListener(
-      "message",
-      (event: MessageEvent<unknown>) => {
-        const frame = frames.find(
-          (item) => item.contentWindow === event.source,
+    document
+      .querySelectorAll<HTMLElement>(".process-diagram")
+      .forEach((figure, index) => {
+        if (figure.dataset.enhanced) return;
+        const steps = Array.from(
+          figure.querySelectorAll<HTMLElement>("ol > li"),
         );
-        const data = event.data;
-        if (!frame || !data || typeof data !== "object" || !("type" in data))
-          return;
-        if (data.type === "note-diagram-ready") sendTheme(frame);
-        if (
-          data.type === "note-diagram-size" &&
-          "height" in data &&
-          typeof data.height === "number" &&
-          Number.isFinite(data.height)
-        ) {
-          frame.style.height = `${Math.min(2000, Math.max(160, Math.ceil(data.height)))}px`;
-        }
-      },
-      { signal },
-    );
-    frames.forEach((frame) => sendTheme(frame));
-    const themes = new MutationObserver(() => frames.forEach(sendTheme));
-    themes.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["data-theme"],
-    });
-    signal.addEventListener("abort", () => themes.disconnect(), { once: true });
+        const panel = document.createElement("div");
+        panel.className = "process-detail";
+        panel.id = `process-detail-${index}`;
+        panel.setAttribute("aria-live", "polite");
+        const controls: HTMLButtonElement[] = [];
+        const select = (selected: number) => {
+          controls.forEach((button, item) =>
+            button.setAttribute("aria-pressed", String(item === selected)),
+          );
+          steps.forEach((step, item) =>
+            step.classList.toggle("is-current", item === selected),
+          );
+          panel.replaceChildren(
+            ...Array.from(steps[selected].children)
+              .slice(2)
+              .map((child) => child.cloneNode(true)),
+          );
+        };
+        steps.forEach((step, item) => {
+          const title = step.querySelector("strong");
+          if (!title) return;
+          const button = document.createElement("button");
+          button.type = "button";
+          button.textContent = title.textContent;
+          button.setAttribute("aria-controls", panel.id);
+          button.addEventListener("click", () => select(item), { signal });
+          controls.push(button);
+          title.replaceWith(button);
+        });
+        figure.dataset.enhanced = "true";
+        figure.append(panel);
+        select(0);
+      });
   });
 </script>

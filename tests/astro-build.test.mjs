@@ -21,7 +21,6 @@ test(
         "css",
         "lib",
         "data",
-        "public",
         "astro.config.mjs",
         "tsconfig.json",
         "package.json",
@@ -60,7 +59,7 @@ test(
       ]) {
         await fs.writeFile(
           path.join(root, `content/posts/${slug}.md`),
-          `---\nslug: ${slug}\ntitle: "${slug}"\nsummary: "测试摘要 & 内容"\ndate: "2026-10-10"\ntags: [${tag}]\ndraft: ${draft}\nseries: test-series\norder: ${order}\n---\n## 开始实践\n\n正文。\n\n[角色交互图](/interactive/ai-sdk-subagents/00-roles.html)\n\n[普通外链](https://example.com/diagram.html)\n\n<iframe src="https://example.com/unsafe"></iframe>\n\n\`\`\`js\nconst answer = 42;\n\`\`\`\n\n<script>alert('unsafe')</script>\n`,
+          `---\nslug: ${slug}\ntitle: "${slug}"\nsummary: "测试摘要 & 内容"\ndate: "2026-10-10"\ntags: [${tag}]\ndraft: ${draft}\nseries: test-series\norder: ${order}\n---\n## 开始实践\n\n正文。\n\n> **委派过程**\n>\n> 1. **交出任务**\n>\n>    目标与项目背景一起交付。\n>\n>    明确范围后启动研究。\n>\n> 2. **拿回结果**\n>\n>    接收结论与证据。\n>\n>    主流程继续处理问题。\n\n[普通外链](https://example.com/diagram.html)\n\n<iframe src="https://example.com/unsafe"></iframe>\n\n\`\`\`js\nconst answer = 42;\n\`\`\`\n\n<script>alert('unsafe')</script>\n`,
         );
       }
       await promisify(execFile)(
@@ -90,18 +89,12 @@ test(
       );
       assert.match(article, /property="og:type" content="article"/);
       assert.doesNotMatch(article, /alert\('unsafe'\)/);
-      assert.match(
-        article,
-        /<iframe[^>]*src="\/interactive\/ai-sdk-subagents\/00-roles\.html"/,
-      );
-      assert.match(article, /sandbox="allow-scripts"/);
-      assert.match(article, /title="角色交互图"/);
+      assert.match(article, /<figure class="process-diagram">/);
+      assert.match(article, /目标与项目背景一起交付。/);
+      assert.match(article, /接收结论与证据。/);
+      assert.doesNotMatch(article, /<iframe|单独打开交互图/);
       assert.match(article, /href="https:\/\/example.com\/diagram.html"/);
       assert.doesNotMatch(article, /https:\/\/example.com\/unsafe/);
-      assert.match(
-        await read("interactive/ai-sdk-subagents/00-roles.html"),
-        /diagram\.js/,
-      );
       assert.doesNotMatch(article, /_next\/|__NEXT_DATA__|astro-island/);
       const series = await read("series/test-series.html");
       assert.match(series, /test-first/);
