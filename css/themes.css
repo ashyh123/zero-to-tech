@@ -50,17 +50,6 @@
   --tone-849ab6: #849ab6;
   --tone-19212b: #19212b;
   --tone-c8d4e5: #c8d4e5;
-  --tone-090909: #090909;
-  --tone-f1f1f1: #f1f1f1;
-  --tone-888: #888;
-  --tone-707070: #707070;
-  --tone-eee: #eee;
-  --tone-858585: #858585;
-  --tone-272727: #272727;
-  --tone-1d1d1d: #1d1d1d;
-  --tone-666: #666;
-  --tone-c1c1c1: #c1c1c1;
-  --tone-f0f0f0: #f0f0f0;
 }
 :root[data-theme="light"] {
   color-scheme: light;
@@ -115,17 +104,6 @@
   --tone-849ab6: #607c9e;
   --tone-19212b: #eaf0f7;
   --tone-c8d4e5: #395271;
-  --tone-090909: #f7f8fa;
-  --tone-f1f1f1: #202936;
-  --tone-888: #627083;
-  --tone-707070: #637082;
-  --tone-eee: #283647;
-  --tone-858585: #657487;
-  --tone-272727: #d4dce5;
-  --tone-1d1d1d: #e3e8ee;
-  --tone-666: #8da2bb;
-  --tone-c1c1c1: #58799f;
-  --tone-f0f0f0: #365b89;
 }
 @media (prefers-color-scheme: light) {
   :root:not([data-theme]) {
@@ -181,16 +159,5 @@
     --tone-849ab6: #607c9e;
     --tone-19212b: #eaf0f7;
     --tone-c8d4e5: #395271;
-    --tone-090909: #f7f8fa;
-    --tone-f1f1f1: #202936;
-    --tone-888: #627083;
-    --tone-707070: #637082;
-    --tone-eee: #283647;
-    --tone-858585: #657487;
-    --tone-272727: #d4dce5;
-    --tone-1d1d1d: #e3e8ee;
-    --tone-666: #8da2bb;
-    --tone-c1c1c1: #58799f;
-    --tone-f0f0f0: #365b89;
   }
 }

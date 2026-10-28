@@ -7,27 +7,20 @@ const series = getSeries();
 ---
 
 <>
-  <header class="home-intro tw:pb-[38px] tw:border-0 tw:border-b tw:border-solid tw:border-line tw:mb-[35px] tw:mobile:pb-[27px] tw:mobile:mb-[27px]">
+  <header class="home-intro tw:pb-[26px] tw:border-0 tw:border-b tw:border-solid tw:border-line tw:mb-[26px] tw:mobile:pb-[20px] tw:mobile:mb-[22px]">
     <h1 class="tw:text-[clamp(24px,2.5vw,33px)] tw:font-semibold tw:leading-[1.55] tw:tracking-[0.01em] tw:mobile:text-[23px] tw:mobile:leading-[1.65]">
       一个零基础 Agent 学生的旅程
     </h1>
-    <p class="tw:text-[14px] tw:text-muted tw:mt-[16px] tw:leading-[1.95] tw:max-w-[680px] tw:mobile:text-[13px] tw:mobile:mt-[13px]">
-      从问题出发，在实践中靠近答案。
-      <br />
-      记录 Agent 学习、工程实践，以及那些终于想明白的瞬间。
+    <p class="tw:text-[14px] tw:text-muted tw:mt-[12px] tw:leading-[1.9] tw:max-w-[680px] tw:mobile:mt-[10px]">
+      记录从零学习 Agent 的实践、踩坑与思考，写给同样在入门和动手做项目的人。
     </p>
   </header>
   {posts.length > 0 && (
     <section class="home-section tw:pb-[32px] tw:mobile:pb-[27px]">
-      <div class="section-heading tw:flex tw:justify-between tw:items-center tw:gap-[20px] tw:mb-[24px] tw:mobile:gap-[12px] tw:mobile:mb-[20px]">
-        <div>
-          <h2 class="tw:text-[22px] tw:font-semibold tw:mobile:text-[20px]">
-            学习记录
-          </h2>
-          <p class="tw:text-[12px] tw:text-muted tw:mt-[7px] tw:mobile:text-[11px]">
-            按时间记录实践、思考与收获。
-          </p>
-        </div>
+      <div class="section-heading tw:flex tw:justify-between tw:items-center tw:gap-[20px] tw:mb-[20px] tw:mobile:gap-[12px] tw:mobile:mb-[16px]">
+        <h2 class="tw:text-[22px] tw:font-semibold tw:mobile:text-[20px]">
+          学习记录
+        </h2>
         <a
           class="tw:text-[12px] tw:text-accent tw:whitespace-nowrap tw:mobile:text-[11px]"
           href="/blog"

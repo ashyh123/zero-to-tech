@@ -95,19 +95,17 @@ order: 1
 
 `lib/content.mjs` 是统一内容适配层，页面只依赖其返回的数据。以后接入 CMS 时，替换文章读取与发布流程，继续复用文章、系列、标签页面。草稿过滤保留在内容适配层，正文生成 HTML 前进行清理。
 
-`data/site.js` 管理站名、简介、GitHub、邮箱与网站地址。站点采用统一单栏布局：顶部显示 Evan Huang 和横向导航、居中的内容主栏，手机端顶部展开菜单；下滑时收起导航，上滑时重新出现；首页只展示简介、文章与系列入口。`src/pages/` 管理 Astro 页面与 RSS、sitemap、robots 静态端点，`src/layouts/` 管理公共页面结构，`src/components/` 管理站点外壳、列表、空状态和交互组件，`src/scripts/` 管理主题与加载动效。`css/blog.css` 保留全局基础样式和尚未迁移的内页样式。
+`data/site.js` 管理站名、简介、GitHub、邮箱与网站地址。站点采用统一单栏布局：顶部显示 Evan Huang 和横向导航、居中的内容主栏，手机端顶部展开菜单；下滑时收起导航，上滑时重新出现；首页只展示简介、文章与系列入口。`src/pages/` 管理 Astro 页面与 RSS、sitemap、robots 静态端点，`src/layouts/` 管理公共页面结构，`src/components/` 管理站点外壳、列表、空状态和交互组件，`src/scripts/` 管理主题、导航和页面交互。`css/blog.css` 保留全局基础样式和尚未迁移的内页样式。
 
 ### 组件与交互
 
-Starwind UI 的 Astro 原生按钮由 `src/components/starwind/Button.astro` 统一封装，用于主题切换、手机导航和标签筛选。保留本网站的 Tailwind 样式，不套用组件库默认视觉主题。内容页面不加载 React 运行时，Motion 只负责加载层动效。站内跳转使用 Astro ClientRouter，只更新页面内容；流星背景通过 `transition:persist` 保留节点和动画进度。主题、导航和标签筛选按页面切换重新绑定，旧监听通过 AbortController 释放。入场动画仅在直接访问或刷新时播放。
+Starwind UI 的 Astro 原生按钮由 `src/components/starwind/Button.astro` 统一封装，用于主题切换、手机导航和标签筛选。保留本网站的 Tailwind 样式，不套用组件库默认视觉主题。内容页面不加载 React 运行时。页面直接展示静态内容，不设置加载遮罩、模拟进度或最低等待时间。站内跳转使用 Astro ClientRouter，只更新页面内容；流星背景通过 `transition:persist` 保留节点和动画进度。主题、导航和标签筛选按页面切换重新绑定，旧监听通过 AbortController 释放。
 
 ### 样式逐步迁移
 
 Tailwind 4 通过 `astro.config.mjs` 中的 Vite 插件接入，入口为 `css/tailwind.css`。工具类使用 `tw:` 前缀，扫描范围限定为 `src/`；暂不启用 Preflight，现有重置归入 `base` 层，使组件工具类可以覆盖基础规则。`compact`、`single`、`mobile` 自定义变体分别保持原有的 ≤1150px、≤900px、≤700px 断点。
 
-- 加载界面和文字卷轴的布局、间距与字体使用 Tailwind；加载颜色与字体集中定义在入口文件的 `@theme` 中。
-- 渐隐遮罩、进度条渐变、动画及减少动态效果的适配分别归入 `src/components/TextStream.module.css` 和 `src/components/LoadingIndicator.module.css`，由对应组件直接导入。
-- 文字卷轴使用 Motion 的帧循环保持原有速度和滚动惯性，加载层使用 Motion 淡出；支持减少动态效果，并在加载结束时释放动画和事件监听。
+- 文章列表的标题、摘要与日期使用不同字号和文字颜色；桌面保留左侧日期栏，手机端将日期和阅读时长放在标题下方，让标题与摘要使用完整内容宽度。
 - 站点外壳、顶部导航、页脚、首页区块、文章列表和空状态已使用 Tailwind；对应的旧规则已从 `blog.css` 删除。首页的系列卡片也使用工具类，系列内页暂保留原有样式。颜色通过主题变量复用既有色值。
 - `css/themes.css` 统一管理深浅色调色板。顶部圆形按钮点击一次直接切换深色／浅色，选择保存在 `site-theme`；未手动选择时跟随系统。初始化脚本在首屏绘制前应用偏好。
 - 后续按组件迁移：移走旧样式后再使用工具类，避免同一属性同时受全局 CSS 与 Tailwind 控制。含有特殊效果的组件继续保留 CSS Modules。

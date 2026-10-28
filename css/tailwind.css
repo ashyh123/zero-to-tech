@@ -25,10 +25,4 @@
   --color-nav-hover: var(--tone-191f28);
   --color-nav-active: var(--tone-202b3a);
   --color-nav-active-border: var(--tone-2c3a4d);
-  --color-loader-bg: var(--tone-090909);
-  --color-loader-ink: var(--tone-f1f1f1);
-  --color-loader-muted: var(--tone-888);
-  --color-loader-note: var(--tone-707070);
-  --font-loader: "PingFang SC", "Microsoft YaHei", sans-serif;
-  --font-loader-mono: "SFMono-Regular", Consolas, monospace;
 }

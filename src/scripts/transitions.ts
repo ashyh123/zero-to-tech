@@ -1,10 +1,7 @@
 let meteorPhases: { element: Element; time: number }[] = [];
 let capturedAt = 0;
 
-document.addEventListener("astro:before-swap", (event) => {
-  const incoming = (event as Event & { newDocument: Document }).newDocument;
-  incoming.querySelector(".initial-loader")?.remove();
-  incoming.documentElement.dataset.skipEntry = "true";
+document.addEventListener("astro:before-swap", () => {
   capturedAt = performance.now();
   meteorPhases = Array.from(
     document.querySelectorAll("#site-meteors .meteor"),

@@ -4,7 +4,6 @@ import "../../css/tailwind.css";
 import "../../css/themes.css";
 import { ClientRouter } from "astro:transitions";
 import MeteorBackground from "../components/MeteorBackground.astro";
-import InitialLoader from "../components/InitialLoader.astro";
 import SiteHeader from "../components/SiteHeader.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import { rssEnabled, site, siteUrl } from "../../data/site.js";
@@ -69,26 +68,6 @@ const url = new URL(canonical, siteUrl).href;
           : "light";
       }
     </script>
-    <script is:inline>
-      // Keep the entrance for direct visits and refreshes, not internal links.
-      try {
-        const navigation = performance.getEntriesByType("navigation")[0];
-        const fromThisSite =
-          document.referrer &&
-          new URL(document.referrer).origin === location.origin;
-        if (
-          navigation?.type === "back_forward" ||
-          (navigation?.type === "navigate" && fromThisSite)
-        ) {
-          document.documentElement.dataset.skipEntry = "true";
-        }
-      } catch {}
-    </script>
-    <style is:global>
-      html[data-skip-entry="true"] .initial-loader {
-        display: none !important;
-      }
-    </style>
   </head>
   <body>
     <div
@@ -98,12 +77,8 @@ const url = new URL(canonical, siteUrl).href;
     >
       <MeteorBackground />
     </div>
-    <InitialLoader />
     <noscript>
       <style is:inline>
-        .initial-loader {
-          display: none !important;
-        }
         .theme-switcher {
           display: none;
         }
