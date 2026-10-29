@@ -1,35 +1,45 @@
 ---
 import { rssEnabled } from "../../data/site.js";
 import PostList from "./PostList.astro";
-import EmptyState from "./EmptyState.astro";
 import Button from "./starwind/Button.astro";
 const { posts, tags } = Astro.props;
 ---
 
-<div class="reading-layout" data-blog-index>
-  <div>
-    <slot />
-    <section aria-label="文章列表">
-      <p class="list-caption" data-list-caption aria-live="polite">
-        {posts.length
-          ? `${posts.length} 篇文章，按发布时间排列`
-          : "每一步，都值得记录"}
-      </p>
-      <PostList posts={posts} />
-      <div data-filter-empty hidden={posts.length > 0}>
-        <EmptyState />
-      </div>
-    </section>
-  </div>
-  <aside class="sidebar">
+<div class="blog-layout" data-blog-index>
+  <section class="blog-posts" aria-label="文章列表">
+    <p class="list-caption" data-list-caption aria-live="polite">
+      {posts.length
+        ? `${posts.length} 篇文章，按发布时间排列`
+        : "每一步，都值得记录"}
+    </p>
+    <PostList posts={posts} />
+    <div
+      data-filter-empty
+      hidden={posts.length > 0}
+      class="block-surface"
+      data-tone="paper"
+    >
+      <h2>文章准备中</h2>
+      <p>关于 Agent 的理解、踩过的坑和动手过程，会慢慢写在这里。</p>
+    </div>
+  </section>
+  <aside
+    class="blog-filter block-surface"
+    data-tone="navy"
+    aria-label="按标签浏览"
+  >
     <h2>按标签浏览</h2>
     {tags.length ? (
-      <div class="tag-list">
-        <Button class="tag selected" data-filter="" aria-pressed="true">
+      <div class="filter-options">
+        <Button
+          class="filter-button selected"
+          data-filter=""
+          aria-pressed="true"
+        >
           全部
         </Button>
         {tags.map((tag) => (
-          <Button class="tag" data-filter={tag} aria-pressed="false">
+          <Button class="filter-button" data-filter={tag} aria-pressed="false">
             {tag}
           </Button>
         ))}
@@ -37,13 +47,88 @@ const { posts, tags } = Astro.props;
     ) : (
       <p>发布文章后，标签会出现在这里。</p>
     )}
-    <div class="sidebar-note">
-      <h2>一起走这段路</h2>
-      <p>从小项目出发，记录 Agent，也记录构建它所需的工程知识。</p>
-      {rssEnabled && <a href="/rss.xml">订阅更新</a>}
-    </div>
+  </aside>
+  <div class="blog-upcoming">
+    <slot />
+  </div>
+  <aside class="blog-note block-surface" data-tone="sage">
+    <h2>一起走这段路</h2>
+    <p>从小项目出发，记录 Agent，也记录构建它所需的工程知识。</p>
+    {rssEnabled && (
+      <a class="subscribe-link" href="/rss.xml">
+        订阅更新 <span aria-hidden="true">↗</span>
+      </a>
+    )}
   </aside>
 </div>
+<style>
+  .blog-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 285px;
+    gap: 20px;
+    align-items: start;
+  }
+  .blog-posts {
+    grid-row: span 3;
+    min-width: 0;
+  }
+  .list-caption {
+    margin: 0 0 15px 4px;
+    font-size: 13px;
+  }
+  .blog-filter h2,
+  .blog-note h2 {
+    font-size: 19px;
+    margin-bottom: 17px;
+  }
+  .filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .filter-button {
+    padding: 7px 12px;
+    border: 1px solid color-mix(in srgb, var(--block-ink) 25%, transparent);
+    border-radius: 9px;
+    background: transparent;
+    color: var(--block-ink);
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  .filter-button[aria-pressed="true"] {
+    color: #26354b;
+    background: #eaf0f7;
+    border-color: transparent;
+  }
+  .subscribe-link {
+    display: inline-block;
+    margin-top: 19px;
+    font-size: 14px;
+  }
+  @media (max-width: 950px) {
+    .blog-layout {
+      grid-template-columns: minmax(0, 1fr) 250px;
+    }
+  }
+  @media (max-width: 800px) {
+    .filter-button {
+      min-height: 44px;
+    }
+    .blog-layout {
+      display: flex;
+      flex-direction: column;
+    }
+    .blog-layout > * {
+      width: 100%;
+    }
+    .blog-filter {
+      order: -1;
+    }
+    .blog-note {
+      order: 1;
+    }
+  }
+</style>
 <script>
   import { onPageChange } from "../scripts/page-lifecycle";
   onPageChange((signal) => {

@@ -1,6 +1,6 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import PageHeading from "../../components/PageHeading.astro";
+import "../../../css/blocks.css";
 import BlogIndex from "../../components/BlogIndex.astro";
 import { getPosts } from "../../../lib/content.mjs";
 const metadata = {
@@ -17,18 +17,19 @@ const posts = getPosts().map(({ body, ...post }) => post);
   description={metadata.description}
   canonical={metadata.alternates?.canonical}
 >
-  <>
-    <PageHeading
-      title="学习记录"
-      subtitle="把做过的事、遇到的问题和想明白的瞬间，留在这里。"
-    />
+  <div class="block-page">
+    <header class="block-hero block-surface">
+      <h1>学习记录</h1>
+      <p>把做过的事、遇到的问题和想明白的瞬间，留在这里。</p>
+    </header>
     <BlogIndex
       posts={posts}
       tags={[...new Set(posts.flatMap((post) => post.tags))].sort()}
     >
       <section
         aria-labelledby="upcoming-heading"
-        class="tw:mb-[36px] tw:border tw:border-solid tw:border-line tw:rounded-[8px] tw:bg-panel tw:p-[24px] tw:mobile:p-[20px]"
+        class="block-surface"
+        data-tone="paper"
       >
         <h2
           id="upcoming-heading"
@@ -36,9 +37,9 @@ const posts = getPosts().map(({ body, ...post }) => post);
         >
           待完成
         </h2>
-        <div class="tw:grid tw:gap-[20px]">
+        <div class="tw:grid tw:gap-[12px]">
           {["第一次面试感想", "最近的思考"].map((title) => (
-            <label class="upcoming-item tw:relative tw:min-h-[32px] tw:flex tw:w-fit tw:items-center tw:gap-[12px] tw:cursor-pointer tw:text-[14px]">
+            <label class="upcoming-item tw:relative tw:min-h-[44px] tw:flex tw:w-fit tw:items-center tw:gap-[12px] tw:cursor-pointer tw:text-[14px]">
               <span class="tw:relative tw:flex tw:shrink-0">
                 <input
                   type="checkbox"
@@ -66,7 +67,7 @@ const posts = getPosts().map(({ body, ...post }) => post);
         </div>
       </section>
     </BlogIndex>
-  </>
+  </div>
 </Layout>
 
 <style>

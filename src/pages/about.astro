@@ -1,12 +1,20 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import PageHeading from "../components/PageHeading.astro";
+import "../../css/blocks.css";
 import SectionNav from "../components/SectionNav.astro";
 import { site } from "../../data/site.js";
 const sections = [
-  { id: "why-record", title: "为什么开始记录" },
-  { id: "practice", title: "先从实践出发" },
-  { id: "contact", title: "一起交流" },
+  {
+    id: "why-record",
+    title: "为什么开始记录",
+    description: "学习的起点与记录的理由",
+  },
+  {
+    id: "practice",
+    title: "先从实践出发",
+    description: "小项目、踩坑与解决过程",
+  },
+  { id: "contact", title: "一起交流", description: "通过 GitHub 或邮箱联系" },
 ];
 const metadata = {
   title: "关于我",
@@ -19,13 +27,18 @@ const metadata = {
   description={metadata.description}
   canonical={metadata.alternates?.canonical}
 >
-  <>
-    <PageHeading
-      title="你好，我也在学习。"
-      subtitle="一个零基础 Agent 学生，和一段正在发生的旅程。"
-    />
-    <div class="about-layout">
-      <article class="prose">
+  <div class="block-page">
+    <header class="block-hero block-surface">
+      <h1>你好，我也在学习。</h1>
+      <p>一个零基础 Agent 学生，和一段正在发生的旅程。</p>
+    </header>
+    <SectionNav items={sections} />
+    <article class="about-blocks">
+      <section
+        class="about-story block-surface"
+        data-tone="paper"
+        aria-labelledby="why-record"
+      >
         <h2 id="why-record">为什么开始记录</h2>
         <p>
           这里记录我从零学习 Agent
@@ -35,21 +48,94 @@ const metadata = {
           除了 Agent
           本身，也会写到构建它所需的前端、后端和部署知识。希望这些具体的过程，能给走在同一条路上的你一点参考。
         </p>
+      </section>
+      <section
+        class="about-practice block-surface"
+        data-tone="navy"
+        aria-labelledby="practice"
+      >
         <h2 id="practice">先从实践出发</h2>
-        <p>
-          从小项目开始，在动手实践中理解代码，记录遇到的问题和解决的过程。
-        </p>
+        <p>从小项目开始，在动手实践中理解代码，记录遇到的问题和解决的过程。</p>
         <blockquote>
           <p>已识乾坤大，尤怜草木青。</p>
         </blockquote>
-        <h2 id="contact">一起交流</h2>
-        <p>如果你也在学习，或对项目有建议，欢迎通过 GitHub 或邮箱联系我。</p>
-        <div class="contact-links">
-          <a href={site.github}>GitHub / ashyh123</a>
-          <a href={`mailto:${site.email}`}>{site.email}</a>
+      </section>
+      <section
+        class="about-contact block-surface"
+        data-tone="sage"
+        aria-labelledby="contact"
+      >
+        <div>
+          <h2 id="contact">一起交流</h2>
+          <p>如果你也在学习，或对项目有建议，欢迎通过 GitHub 或邮箱联系我。</p>
         </div>
-      </article>
-      <SectionNav items={sections} />
-    </div>
-  </>
+        <div class="about-contact-links">
+          <a href={site.github}>
+            GitHub / ashyh123 <span aria-hidden="true">↗</span>
+          </a>
+          <a href={`mailto:${site.email}`}>
+            {site.email} <span aria-hidden="true">↗</span>
+          </a>
+        </div>
+      </section>
+    </article>
+  </div>
 </Layout>
+<style>
+  .about-blocks {
+    display: grid;
+    grid-template-columns: 7fr 5fr;
+    gap: 20px;
+  }
+  .about-story,
+  .about-practice {
+    min-height: 280px;
+  }
+  .about-blocks p {
+    margin-top: 17px;
+  }
+  .about-blocks blockquote {
+    margin: 30px 0 0;
+    padding: 0;
+    border: 0;
+  }
+  .about-blocks blockquote p {
+    color: var(--block-ink);
+    font-size: 17px;
+    line-height: 1.9;
+  }
+  .about-contact {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 32px;
+  }
+  .about-contact-links {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .about-contact-links a {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+  }
+  .about-contact-links span {
+    flex-shrink: 0;
+  }
+  @media (max-width: 800px) {
+    .about-blocks,
+    .about-contact {
+      grid-template-columns: 1fr;
+    }
+    .about-story,
+    .about-practice {
+      min-height: 0;
+    }
+  }
+</style>

@@ -2,18 +2,19 @@
 const { items } = Astro.props;
 ---
 
-<aside class="about-contents tw:sticky tw:top-[112px] tw:self-start tw:mt-[38px] tw:single:static tw:single:row-start-1 tw:single:mt-0">
+<aside class="about-contents block-surface">
   <nav aria-label="关于页章节目录" data-section-navigation>
-    <p class="tw:mb-[16px] tw:text-[12px] tw:text-muted">本页目录</p>
-    <ol class="tw:m-0 tw:p-0 tw:list-none tw:border-0 tw:border-l tw:border-solid tw:border-line">
+    <p class="section-nav-label">本页导航</p>
+    <ol class="section-track">
       {items.map((item, index) => (
         <li>
           <a
-            class="section-link tw:relative tw:block tw:py-[10px] tw:pl-[22px] tw:pr-[8px] tw:text-[13px] tw:leading-[1.7] tw:text-muted tw:transition-colors tw:hover:text-accent"
+            class="section-link"
             href={`#${item.id}`}
             aria-current={index === 0 ? "location" : undefined}
           >
-            {item.title}
+            <span class="section-title">{item.title}</span>
+            <span class="section-description">{item.description}</span>
           </a>
         </li>
       ))}
@@ -21,20 +22,73 @@ const { items } = Astro.props;
   </nav>
 </aside>
 <style>
-  .section-link[aria-current="location"] {
-    color: var(--accent);
-    font-weight: 600;
+  .about-contents {
+    margin-bottom: 20px;
   }
-  .section-link[aria-current="location"]::before {
+  .section-nav-label {
+    color: var(--block-muted);
+    font-size: 13px;
+    margin-bottom: 17px;
+  }
+  .section-track {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 24px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .section-link {
+    display: block;
+    min-height: 60px;
+    padding: 0 0 0 22px;
+    position: relative;
+    color: var(--block-muted);
+  }
+  .section-link::before {
     content: "";
     position: absolute;
-    left: -1.5px;
-    top: 50%;
-    width: 2px;
-    height: 20px;
-    border-radius: 2px;
-    background: var(--accent);
-    transform: translateY(-50%);
+    left: 0;
+    top: 9px;
+    width: 9px;
+    height: 9px;
+    border: 1px solid var(--block-muted);
+    border-radius: 50%;
+  }
+  .section-title {
+    display: block;
+    font-size: 17px;
+    line-height: 1.6;
+  }
+  .section-description {
+    display: block;
+    font-size: 13px;
+    line-height: 1.85;
+    margin-top: 7px;
+  }
+  .section-link[aria-current="location"] {
+    color: var(--block-ink);
+  }
+  .section-link[aria-current="location"]::before {
+    background: var(--block-ink);
+    border-color: var(--block-ink);
+  }
+  @media (max-width: 700px) {
+    .section-track {
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+    .section-link {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+    }
+    .section-link::before {
+      top: 17px;
+    }
+    .section-description {
+      display: none;
+    }
   }
 </style>
 <script>
@@ -47,6 +101,7 @@ const { items } = Astro.props;
       document.getElementById(link.hash.slice(1)),
     );
     let frame = 0;
+    let anchored = links.findIndex((link) => link.hash === location.hash);
     function select(index: number) {
       links.forEach((link, i) => {
         if (i === index) link.setAttribute("aria-current", "location");
@@ -55,6 +110,12 @@ const { items } = Astro.props;
     }
     function update() {
       frame = 0;
+      // A short page can clamp several anchor targets to the same scroll offset.
+      // Keep the requested section selected until the reader scrolls manually.
+      if (anchored >= 0) {
+        select(anchored);
+        return;
+      }
       const top =
         (document.querySelector<HTMLElement>(".site-header")?.offsetHeight ||
           80) + 28;
@@ -73,12 +134,40 @@ const { items } = Astro.props;
       if (!frame) frame = requestAnimationFrame(update);
     };
     window.addEventListener("scroll", schedule, { passive: true, signal });
-    window.addEventListener("resize", schedule, { signal });
+    const releaseAnchor = () => {
+      anchored = -1;
+    };
+    ["wheel", "touchstart", "pointerdown", "keydown"].forEach((event) =>
+      window.addEventListener(event, releaseAnchor, { passive: true, signal }),
+    );
+    window.addEventListener(
+      "hashchange",
+      () => {
+        anchored = links.findIndex((link) => link.hash === location.hash);
+        schedule();
+      },
+      { signal },
+    );
+    window.addEventListener(
+      "resize",
+      () => {
+        releaseAnchor();
+        schedule();
+      },
+      { signal },
+    );
     signal.addEventListener("abort", () => cancelAnimationFrame(frame), {
       once: true,
     });
     links.forEach((link, i) =>
-      link.addEventListener("click", () => select(i), { signal }),
+      link.addEventListener(
+        "click",
+        () => {
+          anchored = i;
+          select(i);
+        },
+        { signal },
+      ),
     );
     update();
   });

@@ -4,43 +4,45 @@ const { posts } = Astro.props;
 ---
 
 <div class="post-list">
-  {posts.map((post) => (
+  {posts.map((post, index) => (
     <article
       data-post-tags={JSON.stringify(post.tags)}
-      class="post-preview tw:py-[26px] tw:border-0 tw:border-b tw:border-solid tw:border-line tw:first:pt-[10px] tw:grid tw:grid-cols-[66px_minmax(0,1fr)] tw:gap-[23px] tw:mobile:block"
+      class="post-preview block-surface"
+      data-tone={index === 0 ? undefined : "paper"}
     >
-      <time
-        class="post-date tw:flex tw:flex-col tw:border-0 tw:border-r tw:border-solid tw:border-line tw:text-muted tw:text-[12px] tw:pr-[16px] tw:mt-[4px] tw:leading-[1.9] tw:mobile:hidden"
-        datetime={post.date}
-        aria-label={formatDate(post.date)}
-      >
-        <span>{post.date.slice(0, 4)}</span>
-        <span>{post.date.slice(5)}</span>
-      </time>
-      <div class="post-summary tw:min-w-0">
-        <h2 class="tw:mb-[10px] tw:text-[21px] tw:font-semibold tw:leading-[1.6] tw:mobile:text-[19px] tw:mobile:mb-[8px]">
-          <a href={`/blog/${post.slug}`}>{post.title}</a>
-        </h2>
-        <div class="post-mobile-meta tw:hidden tw:mobile:flex tw:mobile:flex-wrap tw:mobile:gap-x-[16px] tw:mobile:gap-y-[4px] tw:mobile:mb-[10px] tw:text-muted tw:text-[12px] tw:leading-[1.7]">
-          <time datetime={post.date}>{formatDate(post.date)}</time>
-          <span>{post.readingMinutes} 分钟阅读</span>
-        </div>
-        <p class="tw:text-[color-mix(in_srgb,var(--ink)_80%,var(--muted))] tw:text-[15px] tw:leading-[1.85] tw:mb-[12px] tw:mobile:text-[14px]">
-          {post.summary}
-        </p>
-        <div class="post-row-footer tw:flex tw:gap-[15px] tw:items-center tw:justify-between">
-          <div class="tw:flex tw:flex-wrap tw:gap-[8px]">
-            {post.tags.map((tag) => (
-              <span class="tw:inline-block tw:py-[2px] tw:px-[8px] tw:border tw:border-solid tw:border-[color-mix(in_srgb,var(--line)_65%,transparent)] tw:rounded-[5px] tw:bg-[color-mix(in_srgb,var(--tone-1b222c)_45%,transparent)] tw:text-[12px] tw:leading-[1.7] tw:text-muted">
-                {tag}
-              </span>
-            ))}
-          </div>
-          <span class="reading-duration tw:text-muted tw:text-[12px] tw:whitespace-nowrap tw:mobile:hidden">
-            {post.readingMinutes} 分钟阅读
-          </span>
-        </div>
+      <div class="post-meta-line">
+        <time datetime={post.date}>{formatDate(post.date)}</time>
+        <span>{post.readingMinutes} 分钟阅读</span>
+      </div>
+      <h2>
+        <a href={`/blog/${post.slug}`}>{post.title}</a>
+      </h2>
+      <p class="post-description">{post.summary}</p>
+      <div class="block-tags" aria-label="文章标签">
+        {post.tags.map((tag) => (
+          <span>{tag}</span>
+        ))}
       </div>
     </article>
   ))}
 </div>
+<style>
+  .post-list {
+    display: grid;
+    gap: 20px;
+  }
+  .post-meta-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    color: var(--block-muted);
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+  .post-description {
+    margin-top: 13px;
+  }
+  .block-tags {
+    margin-top: 20px;
+  }
+</style>
