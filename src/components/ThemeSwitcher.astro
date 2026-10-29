@@ -4,10 +4,10 @@ import ThemeIcon from "./ThemeIcon.astro";
 const modes = ["dark", "light"];
 ---
 
-<div class="theme-switcher tw:relative tw:shrink-0 tw:mobile:absolute tw:mobile:top-[18px] tw:mobile:right-[68px]">
+<div class="theme-switcher tw:shrink-0">
   <Button
     data-theme-trigger
-    class="nav-capsule tw:grid tw:place-items-center tw:w-[36px] tw:h-[36px] tw:text-ink"
+    class="nav-capsule tw:inline-flex tw:items-center tw:justify-center tw:w-[44px] tw:h-[44px] tw:p-0 tw:leading-none tw:text-ink"
     aria-label="切换深浅色主题"
   >
     {modes.map((mode) => (

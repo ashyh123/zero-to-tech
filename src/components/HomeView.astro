@@ -1,70 +1,456 @@
----
-import PostList from "./PostList.astro";
-import { getPosts, getSeries } from "../../lib/content.mjs";
-
-const posts = getPosts();
-const series = getSeries();
----
-
-<>
-  <header class="home-intro tw:pb-[26px] tw:border-0 tw:border-b tw:border-solid tw:border-line tw:mb-[26px] tw:mobile:pb-[20px] tw:mobile:mb-[22px]">
-    <h1 class="tw:text-[clamp(24px,2.5vw,33px)] tw:font-semibold tw:leading-[1.55] tw:tracking-[0.01em] tw:mobile:text-[23px] tw:mobile:leading-[1.65]">
-      一个零基础 Agent 学生的旅程
+<section class="home-overview" aria-label="博客总览">
+  <header class="overview-block overview-intro">
+    <p class="intro-greeting">你好，我是 Evan。</p>
+    <h1>
+      一个零基础
+      <br />
+      Agent 学生的旅程
     </h1>
-    <p class="tw:text-[14px] tw:text-muted tw:mt-[12px] tw:leading-[1.9] tw:max-w-[680px] tw:mobile:mt-[10px]">
-      记录从零学习 Agent 的实践、踩坑与思考，写给同样在入门和动手做项目的人。
+    <p class="intro-copy">
+      从读懂一段源码，到把想法做成一个小项目，
+      <br class="intro-break" />
+      我正在慢慢理解 Agent 怎样工作。
     </p>
+    <p class="intro-note">在这里，留下学习、实践和一路上的思考。</p>
   </header>
-  {posts.length > 0 && (
-    <section class="home-section tw:pb-[32px] tw:mobile:pb-[27px]">
-      <div class="section-heading tw:flex tw:justify-between tw:items-center tw:gap-[20px] tw:mb-[20px] tw:mobile:gap-[12px] tw:mobile:mb-[16px]">
-        <h2 class="tw:text-[22px] tw:font-semibold tw:mobile:text-[20px]">
-          学习记录
-        </h2>
-        <a
-          class="tw:text-[12px] tw:text-accent tw:whitespace-nowrap tw:mobile:text-[11px]"
-          href="/blog"
-        >
-          全部文章 <span aria-hidden="true">↗</span>
-        </a>
-      </div>
-      <PostList posts={posts.slice(0, 5)} />
-    </section>
-  )}
-  {series.length > 0 && (
-    <section class="home-section home-series tw:pb-[32px] tw:border-0 tw:border-t tw:border-solid tw:border-line tw:pt-[30px] tw:mobile:pb-[27px] tw:mobile:pt-[25px]">
-      <div class="section-heading tw:flex tw:justify-between tw:items-center tw:gap-[20px] tw:mb-[24px] tw:mobile:gap-[12px] tw:mobile:mb-[20px]">
-        <div>
-          <h2 class="tw:text-[22px] tw:font-semibold tw:mobile:text-[20px]">
-            系列专题
-          </h2>
-          <p class="tw:text-[12px] tw:text-muted tw:mt-[7px] tw:mobile:text-[11px]">
-            沿着一条线，把零散的实践串起来。
-          </p>
-        </div>
-        <a
-          class="tw:text-[12px] tw:text-accent tw:whitespace-nowrap tw:mobile:text-[11px]"
-          href="/series"
-        >
-          全部系列 <span aria-hidden="true">↗</span>
-        </a>
-      </div>
-      <div class="tw:grid tw:grid-cols-2 tw:gap-[20px] tw:single:grid-cols-1">
-        {series.map((item) => (
-          <a
-            class="tw:p-[25px] tw:border tw:border-solid tw:border-line tw:rounded-[8px] tw:bg-panel"
-            href={`/series/${item.slug}`}
-          >
-            <h3 class="tw:text-[20px]">{item.title}</h3>
-            <p class="tw:text-[14px] tw:text-muted tw:my-[12px]">
-              {item.description}
-            </p>
-            <span class="tw:text-[12px] tw:text-accent">
-              {item.posts.length} 篇记录
-            </span>
-          </a>
-        ))}
-      </div>
-    </section>
-  )}
-</>
+
+  <a href="/blog" class="overview-block overview-writing">
+    <div class="block-copy">
+      <h2>文章与笔记</h2>
+      <p>读代码、拆概念，也记录实践中的问题与想法。</p>
+    </div>
+    <svg
+      class="block-art writing-art"
+      viewBox="0 0 300 180"
+      fill="none"
+      aria-hidden="true"
+    >
+      <g transform="translate(72 24) rotate(-12 75 65)">
+        <rect
+          x="0"
+          y="0"
+          width="144"
+          height="132"
+          rx="12"
+          fill="var(--art-blue)"
+        />
+        <path
+          d="M23 29H101M23 45H116M23 61H90"
+          stroke="var(--block-bg)"
+          stroke-width="5"
+          stroke-linecap="round"
+          opacity=".4"
+        />
+      </g>
+      <g transform="translate(129 17) rotate(9 66 70)">
+        <rect width="130" height="144" rx="12" fill="var(--art-paper)" />
+        <rect
+          x="18"
+          y="19"
+          width="39"
+          height="7"
+          rx="3.5"
+          fill="var(--art-ink)"
+        />
+        <path
+          d="M18 43H109M18 58H96M18 73H109M18 88H80"
+          stroke="var(--art-ink)"
+          stroke-width="4"
+          stroke-linecap="round"
+          opacity=".25"
+        />
+        <rect
+          x="18"
+          y="108"
+          width="49"
+          height="19"
+          rx="5"
+          fill="var(--art-green)"
+        />
+      </g>
+      <circle cx="63" cy="134" r="21" fill="var(--art-green)" />
+      <path
+        d="M54 134L60 140L72 127"
+        stroke="var(--art-ink)"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+    <span class="block-link">
+      浏览文章 <span aria-hidden="true">↗</span>
+    </span>
+  </a>
+
+  <a href="/works" class="overview-block overview-projects">
+    <div class="block-copy">
+      <h2>项目实践</h2>
+      <p>把理解放进代码，留下实验与迭代的过程。</p>
+    </div>
+    <svg
+      class="block-art projects-art"
+      viewBox="0 0 300 160"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M46 80H109M160 80H245M144 40V20H244V55M144 114V139H46V102"
+        stroke="var(--art-paper)"
+        stroke-width="2"
+        opacity=".45"
+      />
+      <rect
+        x="18"
+        y="53"
+        width="55"
+        height="55"
+        rx="13"
+        transform="rotate(-12 45 80)"
+        fill="var(--art-green)"
+      />
+      <rect
+        x="111"
+        y="46"
+        width="67"
+        height="67"
+        rx="17"
+        transform="rotate(10 144 80)"
+        fill="var(--art-blue)"
+      />
+      <path
+        d="M133 69L122 80L133 91M153 69L164 80L153 91"
+        stroke="var(--art-ink)"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <circle cx="245" cy="80" r="28" fill="var(--art-paper)" />
+      <path
+        d="M235 80L242 87L256 72"
+        stroke="var(--art-ink)"
+        stroke-width="3"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+      <circle cx="46" cy="139" r="5" fill="var(--art-blue)" />
+      <circle cx="144" cy="20" r="5" fill="var(--art-green)" />
+    </svg>
+    <span class="block-link">
+      进入作品页 <span aria-hidden="true">↗</span>
+    </span>
+  </a>
+
+  <a href="/about" class="overview-block overview-about">
+    <div class="block-copy">
+      <h2>关于这段旅程</h2>
+      <p>
+        我是谁，为什么开始，
+        <br />
+        以及想走向哪里。
+      </p>
+    </div>
+    <svg
+      class="block-art about-art"
+      viewBox="0 0 300 210"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M50 152C12 107 112 126 96 74C79 22 173 21 180 68C188 116 272 85 258 148"
+        stroke="var(--art-line)"
+        stroke-width="2"
+        stroke-dasharray="5 7"
+        stroke-linecap="round"
+      />
+      <g transform="rotate(-10 64 150)">
+        <rect
+          x="22"
+          y="126"
+          width="85"
+          height="48"
+          rx="14"
+          fill="var(--art-blue)"
+        />
+        <text x="64" y="156" text-anchor="middle" fill="var(--art-ink)">
+          学习
+        </text>
+      </g>
+      <g transform="rotate(8 149 57)">
+        <rect
+          x="107"
+          y="33"
+          width="85"
+          height="48"
+          rx="14"
+          fill="var(--art-paper)"
+        />
+        <text x="149" y="63" text-anchor="middle" fill="var(--art-ink)">
+          动手
+        </text>
+      </g>
+      <g transform="rotate(-6 248 149)">
+        <rect
+          x="205"
+          y="125"
+          width="85"
+          height="48"
+          rx="14"
+          fill="var(--art-green)"
+        />
+        <text x="248" y="155" text-anchor="middle" fill="var(--art-ink)">
+          记录
+        </text>
+      </g>
+    </svg>
+    <span class="block-link">
+      了解我 <span aria-hidden="true">↗</span>
+    </span>
+  </a>
+</section>
+
+<style>
+  .home-overview {
+    --art-blue: #a6c5e9;
+    --art-green: #c8d7bf;
+    --art-paper: #f5f6f2;
+    --art-ink: #34425b;
+    --art-line: #8e9eb2;
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 20px;
+  }
+  .overview-block {
+    position: relative;
+    isolation: isolate;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    overflow: hidden;
+    min-width: 0;
+    padding: 34px;
+    border-radius: 24px;
+    color: var(--block-ink);
+    background: var(--block-bg);
+  }
+  a.overview-block:hover {
+    color: var(--block-ink);
+  }
+  a.overview-block:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 5px;
+    border-radius: 24px;
+  }
+  .overview-intro {
+    --block-bg: light-dark(#eaf0f7, #223147);
+    --block-ink: light-dark(#26354b, #edf2fa);
+    --block-muted: light-dark(#55677f, #b9c7da);
+    grid-column: span 7;
+    min-height: 356px;
+  }
+  .intro-greeting {
+    color: var(--block-muted);
+    font-size: 14px;
+    margin-bottom: 17px;
+  }
+  .overview-intro h1 {
+    font-size: clamp(29px, 3.2vw, 39px);
+    font-weight: 600;
+    line-height: 1.45;
+    letter-spacing: -0.025em;
+  }
+  .intro-copy {
+    color: var(--block-muted);
+    font-size: 14px;
+    line-height: 1.95;
+    margin-top: 22px;
+  }
+  .intro-note {
+    color: var(--block-muted);
+    font-size: 13px;
+    margin-top: auto;
+    padding-top: 18px;
+  }
+  .overview-writing,
+  .overview-projects {
+    --block-bg: light-dark(#303b53, #33425b);
+    --block-ink: #f1f4fa;
+    --block-muted: #c3ccdc;
+    grid-column: span 5;
+    min-height: 356px;
+  }
+  .overview-projects {
+    --block-bg: light-dark(#303b53, #293c49);
+    min-height: 310px;
+  }
+  .overview-about {
+    --block-bg: light-dark(#e9eeeb, #283832);
+    --block-ink: light-dark(#2e443b, #edf4ee);
+    --block-muted: light-dark(#52675d, #becfc4);
+    grid-column: span 7;
+    min-height: 310px;
+  }
+  .block-copy {
+    position: relative;
+    z-index: 1;
+  }
+  .block-copy h2 {
+    font-size: 27px;
+    line-height: 1.4;
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  .block-copy p {
+    color: var(--block-muted);
+    max-width: 310px;
+    font-size: 14px;
+    line-height: 1.85;
+  }
+  .overview-about .block-copy p {
+    max-width: 240px;
+  }
+  .block-link {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    gap: 13px;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 20px;
+    font-size: 14px;
+  }
+  .block-link > span {
+    display: grid;
+    place-items: center;
+    width: 29px;
+    height: 29px;
+    border: 1px solid color-mix(in srgb, var(--block-ink) 30%, transparent);
+    border-radius: 50%;
+    transition: background-color 160ms ease;
+  }
+  a.overview-block:hover .block-link > span {
+    background-color: color-mix(in srgb, var(--block-ink) 12%, transparent);
+  }
+  .block-art {
+    position: absolute;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .writing-art {
+    width: 255px;
+    right: 14px;
+    bottom: 51px;
+  }
+  .projects-art {
+    width: 244px;
+    right: 20px;
+    bottom: 52px;
+  }
+  .about-art {
+    width: 295px;
+    right: 21px;
+    bottom: 30px;
+  }
+  .about-art text {
+    font-family: var(--sans);
+    font-size: 17px;
+    font-weight: 500;
+  }
+  @media (max-width: 1000px) {
+    .overview-block {
+      padding: 28px;
+    }
+    .intro-break {
+      display: none;
+    }
+    .about-art {
+      width: 245px;
+      right: 10px;
+      bottom: 35px;
+    }
+    .writing-art {
+      width: 235px;
+      right: 8px;
+    }
+    .projects-art {
+      width: 225px;
+      right: 10px;
+    }
+  }
+  @media (max-width: 800px) {
+    .overview-intro,
+    .overview-about {
+      grid-column: span 12;
+    }
+    .overview-intro {
+      min-height: 330px;
+    }
+    .overview-writing,
+    .overview-projects {
+      grid-column: span 6;
+      min-height: 340px;
+    }
+    .writing-art {
+      width: 215px;
+      right: 4px;
+      bottom: 58px;
+    }
+    .projects-art {
+      width: 215px;
+      right: 6px;
+      bottom: 70px;
+    }
+    .about-art {
+      width: 290px;
+      right: 30px;
+    }
+  }
+  @media (max-width: 600px) {
+    .home-overview {
+      gap: 16px;
+    }
+    .overview-block {
+      grid-column: span 12;
+      padding: 26px;
+      border-radius: 20px;
+    }
+    .overview-intro {
+      min-height: 340px;
+    }
+    .overview-intro h1 {
+      font-size: 30px;
+    }
+    .intro-copy {
+      margin-top: 20px;
+    }
+    .block-copy h2 {
+      font-size: 25px;
+    }
+    .overview-writing,
+    .overview-projects {
+      min-height: 320px;
+    }
+    .writing-art {
+      width: 240px;
+      right: 6px;
+      bottom: 44px;
+    }
+    .projects-art {
+      width: 240px;
+      right: 10px;
+      bottom: 52px;
+    }
+    .overview-about {
+      min-height: 335px;
+    }
+    .about-art {
+      width: 235px;
+      right: 0;
+      bottom: 40px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .block-link > span {
+      transition: none;
+    }
+  }
+</style>

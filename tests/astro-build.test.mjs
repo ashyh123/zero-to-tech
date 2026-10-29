@@ -100,12 +100,17 @@ test(
       assert.match(series, /test-first/);
       assert.match(series, /test-second/);
       assert.doesNotMatch(series, /private-draft/);
-      for (const file of [
-        "index.html",
-        "blog.html",
-        "rss.xml",
-        "sitemap.xml",
-      ]) {
+      const home = await read("index.html");
+      const homeMain = home.match(/<main\b[^>]*>([\s\S]*?)<\/main>/)?.[1];
+      assert.ok(homeMain, "Home page renders its main content");
+      for (const destination of ["/blog", "/works", "/about"]) {
+        assert.ok(homeMain.includes(`href="${destination}"`));
+      }
+      assert.doesNotMatch(
+        homeMain,
+        /test-first|test-second|private-draft|秘密标签/,
+      );
+      for (const file of ["blog.html", "rss.xml", "sitemap.xml"]) {
         const output = await read(file);
         assert.match(output, /test-first/);
         assert.doesNotMatch(output, /private-draft|秘密标签/);
