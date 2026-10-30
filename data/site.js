@@ -8,6 +8,9 @@ export const site = {
   repository: "https://github.com/ashyh123/zero-to-tech",
   email: "ashyh666@gmail.com",
 };
+export const friendLinks = [
+  { name: "Joye Blog", url: "https://www.joyehuang.me/" },
+];
 export const siteUrl = (
   process.env.SITE_URL || "http://localhost:3000"
 ).replace(/\/$/, "");

@@ -1,9 +1,28 @@
 ---
-import { rssEnabled, site } from "../../data/site.js";
+import { friendLinks, rssEnabled, site } from "../../data/site.js";
 import SocialLinks from "./SocialLinks.astro";
 ---
 
 <footer class="site-footer tw:flex tw:flex-col tw:gap-[18px] tw:py-[25px] tw:mt-[45px] tw:border-0 tw:border-t tw:border-solid tw:border-line tw:text-[11px] tw:text-[var(--tone-8392a6)] tw:mobile:py-[22px] tw:mobile:mt-[30px] tw:mobile:text-[10px]">
+  {friendLinks.length > 0 && (
+    <nav class="footer-friends" aria-label="友链">
+      <span>友链</span>
+      <ul>
+        {friendLinks.map((friend) => (
+          <li>
+            <a
+              href={friend.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${friend.name}（新窗口打开）`}
+            >
+              {friend.name}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )}
   <div id="contact" class="footer-contact">
     <div>
       <h2>一起交流</h2>
@@ -25,6 +44,53 @@ import SocialLinks from "./SocialLinks.astro";
 </footer>
 
 <style>
+  .footer-friends {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    font-size: 13px;
+  }
+  .footer-friends > span {
+    flex-shrink: 0;
+    color: var(--muted);
+  }
+  .footer-friends ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .footer-friends li {
+    min-width: 0;
+  }
+  .footer-friends a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 5px 12px;
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    color: var(--ink);
+    overflow-wrap: anywhere;
+  }
+  .footer-friends a:hover,
+  .footer-friends a:focus-visible {
+    color: var(--accent-dark);
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, transparent);
+  }
+  .footer-friends a:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+  @media (pointer: coarse) {
+    .footer-friends a {
+      min-height: 44px;
+    }
+  }
   .footer-contact {
     display: flex;
     justify-content: space-between;
