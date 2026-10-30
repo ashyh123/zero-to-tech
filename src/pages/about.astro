@@ -2,7 +2,16 @@
 import Layout from "../layouts/Layout.astro";
 import "../../css/blocks.css";
 import SectionNav from "../components/SectionNav.astro";
-import { site } from "../../data/site.js";
+const tools = [
+  "TypeScript",
+  "Python",
+  "LangGraph",
+  "Astro",
+  "Cloudflare Pages",
+  "Codex",
+  "ChatGPT",
+  "Notion",
+];
 const sections = [
   {
     id: "why-record",
@@ -14,7 +23,11 @@ const sections = [
     title: "先从实践出发",
     description: "小项目、踩坑与解决过程",
   },
-  { id: "contact", title: "一起交流", description: "通过 GitHub 或邮箱联系" },
+  {
+    id: "contact",
+    title: "一起交流",
+    description: "通过 GitHub、X 或邮箱联系",
+  },
 ];
 const metadata = {
   title: "关于我",
@@ -33,6 +46,12 @@ const metadata = {
       <p>一个零基础 Agent 学生，和一段正在发生的旅程。</p>
     </header>
     <SectionNav items={sections} />
+    <section id="toolkit" class="about-toolkit" aria-labelledby="toolkit-title">
+      <h2 id="toolkit-title">技术与工具</h2>
+      <ul class="tool-tags">
+        {tools.map((tool) => <li>{tool}</li>)}
+      </ul>
+    </section>
     <article class="about-blocks">
       <section
         class="about-story block-surface"
@@ -60,28 +79,67 @@ const metadata = {
           <p>已识乾坤大，尤怜草木青。</p>
         </blockquote>
       </section>
-      <section
-        class="about-contact block-surface"
-        data-tone="sage"
-        aria-labelledby="contact"
-      >
-        <div>
-          <h2 id="contact">一起交流</h2>
-          <p>如果你也在学习，或对项目有建议，欢迎通过 GitHub 或邮箱联系我。</p>
-        </div>
-        <div class="about-contact-links">
-          <a href={site.github}>
-            GitHub / ashyh123 <span aria-hidden="true">↗</span>
-          </a>
-          <a href={`mailto:${site.email}`}>
-            {site.email} <span aria-hidden="true">↗</span>
-          </a>
-        </div>
-      </section>
     </article>
   </div>
 </Layout>
 <style>
+  .about-toolkit {
+    margin: 28px 0 32px;
+    scroll-margin-top: 16px;
+  }
+  .about-toolkit h2 {
+    font-size: 21px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+  .tool-tags {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .tool-tags li {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 7px 13px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--paper) 72%, transparent);
+    color: var(--ink);
+    font-size: 13px;
+    line-height: 1.6;
+    white-space: nowrap;
+    transition:
+      transform 160ms ease,
+      background-color 160ms ease,
+      border-color 160ms ease;
+  }
+  .tool-tags li:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+    background: color-mix(in srgb, var(--accent) 12%, var(--paper));
+    color: var(--accent-dark);
+  }
+  .tool-tags li:active {
+    transform: translateY(0);
+  }
+  @media (max-width: 600px) {
+    .tool-tags li {
+      min-height: 44px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tool-tags li,
+    .tool-tags li:hover,
+    .tool-tags li:active {
+      transition: none;
+      transform: none;
+    }
+  }
   .about-blocks {
     display: grid;
     grid-template-columns: 7fr 5fr;
@@ -104,33 +162,8 @@ const metadata = {
     font-size: 17px;
     line-height: 1.9;
   }
-  .about-contact {
-    grid-column: 1 / -1;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
-    gap: 32px;
-  }
-  .about-contact-links {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-  .about-contact-links a {
-    min-height: 40px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    font-size: 14px;
-    overflow-wrap: anywhere;
-  }
-  .about-contact-links span {
-    flex-shrink: 0;
-  }
   @media (max-width: 800px) {
-    .about-blocks,
-    .about-contact {
+    .about-blocks {
       grid-template-columns: 1fr;
     }
     .about-story,

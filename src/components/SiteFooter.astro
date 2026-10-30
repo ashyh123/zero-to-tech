@@ -1,26 +1,53 @@
 ---
 import { rssEnabled, site } from "../../data/site.js";
+import SocialLinks from "./SocialLinks.astro";
 ---
 
 <footer class="site-footer tw:flex tw:flex-col tw:gap-[18px] tw:py-[25px] tw:mt-[45px] tw:border-0 tw:border-t tw:border-solid tw:border-line tw:text-[11px] tw:text-[var(--tone-8392a6)] tw:mobile:py-[22px] tw:mobile:mt-[30px] tw:mobile:text-[10px]">
-  <nav
-    aria-label="联系我"
-    class="tw:flex tw:flex-wrap tw:gap-x-[24px] tw:gap-y-[10px] tw:text-[13px] tw:text-nav"
-  >
-    <a href={site.github}>
-      GitHub <span aria-hidden="true">↗</span>
-    </a>
-    <a href={`mailto:${site.email}`}>
-      邮箱联系 <span aria-hidden="true">↗</span>
-    </a>
-    {rssEnabled && (
+  <div id="contact" class="footer-contact">
+    <div>
+      <h2>一起交流</h2>
+      <p>聊聊 Agent、代码，或最近在折腾的事。</p>
+    </div>
+    <SocialLinks />
+  </div>
+  {rssEnabled && (
+    <nav aria-label="订阅" class="tw:text-[13px] tw:text-nav">
       <a href="/rss.xml">
         RSS 订阅 <span aria-hidden="true">↗</span>
       </a>
-    )}
-  </nav>
+    </nav>
+  )}
   <div class="tw:flex tw:justify-between tw:gap-[20px] tw:mobile:flex-col tw:mobile:gap-[7px]">
     <span>{site.name}</span>
     <span>保持好奇，慢慢积累。</span>
   </div>
 </footer>
+
+<style>
+  .footer-contact {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    padding: 8px 0 14px;
+    scroll-margin-top: 110px;
+  }
+  .footer-contact h2 {
+    color: var(--ink);
+    font-size: 21px;
+    font-weight: 500;
+  }
+  .footer-contact p {
+    margin-top: 9px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  @media (max-width: 600px) {
+    .footer-contact {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 18px;
+    }
+  }
+</style>

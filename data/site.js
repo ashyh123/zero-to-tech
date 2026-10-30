@@ -4,6 +4,7 @@ export const site = {
   description:
     "记录从零学习 Agent 的过程、踩坑与项目实践。写给正在走同一条路的你。",
   github: "https://github.com/ashyh123",
+  x: "https://x.com/asomer666",
   repository: "https://github.com/ashyh123/zero-to-tech",
   email: "ashyh666@gmail.com",
 };
