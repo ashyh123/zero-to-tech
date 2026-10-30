@@ -9,7 +9,11 @@ export const site = {
   email: "ashyh666@gmail.com",
 };
 export const friendLinks = [
-  { name: "Joye Blog", url: "https://www.joyehuang.me/" },
+  {
+    name: "Joye Blog",
+    url: "https://www.joyehuang.me/",
+    avatar: "/images/friends/joye.webp",
+  },
 ];
 export const siteUrl = (
   process.env.SITE_URL || "http://localhost:3000"

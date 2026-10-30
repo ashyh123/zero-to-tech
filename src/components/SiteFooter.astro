@@ -16,7 +16,15 @@ import SocialLinks from "./SocialLinks.astro";
               rel="noopener noreferrer"
               aria-label={`${friend.name}（新窗口打开）`}
             >
-              {friend.name}
+              <img
+                src={friend.avatar}
+                alt=""
+                width="24"
+                height="24"
+                loading="lazy"
+                decoding="async"
+              />
+              <span>{friend.name}</span>
             </a>
           </li>
         ))}
@@ -46,7 +54,7 @@ import SocialLinks from "./SocialLinks.astro";
 <style>
   .footer-friends {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 16px;
     font-size: 13px;
   }
@@ -69,12 +77,21 @@ import SocialLinks from "./SocialLinks.astro";
   .footer-friends a {
     display: inline-flex;
     align-items: center;
+    gap: 8px;
     min-height: 36px;
     padding: 5px 12px;
     border: 1px solid var(--line);
     border-radius: 9px;
     color: var(--ink);
     overflow-wrap: anywhere;
+  }
+  .footer-friends img {
+    display: block;
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    object-fit: cover;
   }
   .footer-friends a:hover,
   .footer-friends a:focus-visible {
